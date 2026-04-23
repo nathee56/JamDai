@@ -133,11 +133,6 @@ export default function DashboardPage() {
         </span>
       </div>
 
-      {/* Recent Notes logic removed as per user request */}
-    </>
-  );
-}
-
       <NoteModal
         open={sheetOpen}
         onClose={() => setSheetOpen(false)}

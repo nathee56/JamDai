@@ -123,11 +123,18 @@ export default function AppLayout({ children }: { children: ReactNode }) {
 
       {/* ── Mobile Top Bar ── */}
       <header className={cn(
-        "md:hidden fixed top-0 left-0 right-0 h-16 flex items-center justify-between px-6 z-30 shrink-0 transition-all duration-500",
-        uiStyle === "liquid" ? "bg-surface" : "bg-base/80 backdrop-blur-2xl border-b border-border/50"
+        "md:hidden fixed top-0 left-0 right-0 h-16 flex items-center justify-between px-6 z-40 shrink-0 transition-all duration-500 bg-base/80 backdrop-blur-2xl border-b border-border/50"
       )}>
         <span className="font-display font-bold text-2xl text-text-hi tracking-tight">จำได้.</span>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          {/* AI Summary Button - Integrated in Header */}
+          <button
+            id="ai-summary-btn"
+            className="w-10 h-10 rounded-xl bg-gold/10 text-gold flex items-center justify-center transition-all active:scale-90"
+            aria-label="AI Summary"
+          >
+            <Bot className="w-5 h-5" />
+          </button>
           <ThemeToggle />
           <div className="w-9 h-9 rounded-full bg-surface border border-border flex items-center justify-center text-sm font-semibold text-text-hi">
             {initial}

@@ -38,6 +38,15 @@ export default function DashboardPage() {
     }
   }, [notes, loading, summary]);
 
+  useEffect(() => {
+    const btn = document.getElementById("ai-summary-btn");
+    if (btn) {
+      const handleClick = () => setSummaryOpen(true);
+      btn.addEventListener("click", handleClick);
+      return () => btn.removeEventListener("click", handleClick);
+    }
+  }, []);
+
   const handleSave = async (text: string, category: NoteCategory) => {
     await addNote(text, category);
     toast.success("บันทึกโน้ตสำเร็จ");
@@ -52,24 +61,8 @@ export default function DashboardPage() {
 
   return (
     <>
-      {/* AI Summary Trigger - Back to Top Bar */}
-      <div className="md:hidden fixed top-3 right-32 z-40">
-        <button
-          onClick={() => setSummaryOpen(true)}
-          disabled={summaryLoading && !summary}
-          className={cn(
-            "w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300",
-            summaryLoading && !summary
-              ? "bg-border text-text-lo"
-              : "bg-gold/10 text-gold hover:bg-gold/20 shadow-lg shadow-gold/5"
-          )}
-        >
-          <Sparkles className={cn("w-5 h-5", summaryLoading ? "animate-pulse" : "")} />
-        </button>
-      </div>
-
       {/* Date */}
-      <p className="font-mono text-xs text-text-lo uppercase tracking-wider mb-2">
+      <p className="font-mono text-xs text-text-lo uppercase tracking-wider mb-2 mt-2">
         {formatThaiDate(new Date())}
       </p>
 
@@ -86,8 +79,8 @@ export default function DashboardPage() {
           : "เริ่มบันทึกความทรงจำแรกของคุณ"}
       </p>
 
-      {/* Quick Add (The Hero Button) - Removed Pulse */}
-      <div className="flex flex-col items-center justify-center mb-16">
+      {/* Quick Add (The Hero Button) */}
+      <div className="flex flex-col items-center justify-center mb-24 md:mb-16">
         <div className="relative">
           <button
             onClick={() => setSheetOpen(true)}

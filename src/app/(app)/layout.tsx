@@ -63,10 +63,12 @@ export default function AppLayout({ children }: { children: ReactNode }) {
     <div className="h-dvh bg-base flex overflow-hidden relative">
       {isLocked && <LockScreen onUnlock={() => setIsLocked(false)} />}
 
-      {/* ── Liquid Background Decor ── */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden liquid-only opacity-0 transition-opacity duration-1000">
-        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-gold/10 blur-[120px] animate-liquid" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-gold/5 blur-[120px] animate-liquid [animation-delay:-5s]" />
+      {/* ── Liquid Background Decor (Apple Mesh Style) ── */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden liquid-only opacity-0 transition-opacity duration-1000 z-0">
+        <div className="absolute top-[-20%] left-[-10%] w-[70%] h-[70%] rounded-full bg-gold/30 blur-[120px] animate-liquid" />
+        <div className="absolute bottom-[-20%] right-[-10%] w-[70%] h-[70%] rounded-full bg-gold/20 blur-[120px] animate-liquid [animation-delay:-8s]" />
+        <div className="absolute top-[20%] right-[10%] w-[50%] h-[50%] rounded-full bg-blue-500/10 blur-[120px] animate-liquid [animation-delay:-15s]" />
+        <div className="absolute bottom-[20%] left-[10%] w-[50%] h-[50%] rounded-full bg-purple-500/10 blur-[120px] animate-liquid [animation-delay:-20s]" />
       </div>
 
       {/* ── Desktop Sidebar ── */}

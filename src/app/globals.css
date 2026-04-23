@@ -166,60 +166,52 @@ body {
 
 /* ── Liquid Glass (iOS 26 Style) ── */
 :root.liquid {
-  --liquid-blur: 40px;
-  --liquid-opacity: 0.45;
-  --liquid-border: rgba(255, 255, 255, 0.15);
+  --liquid-blur: 64px;
+  --liquid-opacity: 0.25;
+  --liquid-border: rgba(255, 255, 255, 0.25);
+  --liquid-glow: rgba(240, 180, 41, 0.15);
 }
 
 .liquid .bg-surface {
-  background-color: rgba(18, 18, 18, var(--liquid-opacity));
-  backdrop-filter: blur(var(--liquid-blur)) saturate(180%);
-  border-color: var(--liquid-border);
+  background-color: rgba(15, 15, 15, var(--liquid-opacity));
+  backdrop-filter: blur(var(--liquid-blur)) saturate(210%);
+  border: 1.5px solid var(--liquid-border);
+  box-shadow: 
+    0 8px 32px 0 rgba(0, 0, 0, 0.37),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05);
 }
 
 .liquid .bg-elevated {
-  background-color: rgba(26, 26, 26, var(--liquid-opacity));
-  backdrop-filter: blur(var(--liquid-blur)) saturate(180%);
-  border-color: var(--liquid-border);
+  background-color: rgba(25, 25, 25, var(--liquid-opacity));
+  backdrop-filter: blur(var(--liquid-blur)) saturate(210%);
+  border: 1.5px solid var(--liquid-border);
+  box-shadow: 
+    0 12px 40px 0 rgba(0, 0, 0, 0.45),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
 .liquid .bg-base {
-  background-image: 
-    radial-gradient(at 0% 0%, rgba(240, 180, 41, 0.05) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(240, 180, 41, 0.03) 0px, transparent 50%);
+  background-color: #000;
+  background-image: none;
 }
 
-.liquid .shadow-sm,
-.liquid .shadow-md,
-.liquid .shadow-lg,
-.liquid .shadow-xl,
-.liquid .shadow-2xl {
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-}
-
-/* Glass Buttons */
-.liquid-btn {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.liquid-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateY(-2px);
+/* Liquid Mesh Gradient Components */
+.liquid-blob {
+  filter: blur(80px);
+  opacity: 0.6;
+  mix-blend-mode: screen;
 }
 
 /* Fluid Animations */
-@keyframes liquid-float {
-  0% { transform: translate(0, 0) scale(1); }
-  33% { transform: translate(10px, -15px) scale(1.05); }
-  66% { transform: translate(-10px, 10px) scale(0.95); }
-  100% { transform: translate(0, 0) scale(1); }
+@keyframes liquid-wavy {
+  0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+  33% { transform: translate(100px, -50px) rotate(120deg) scale(1.2); }
+  66% { transform: translate(-50px, 80px) rotate(240deg) scale(0.8); }
+  100% { transform: translate(0, 0) rotate(360deg) scale(1); }
 }
 
 .animate-liquid {
-  animation: liquid-float 10s ease-in-out infinite;
+  animation: liquid-wavy 25s linear infinite;
 }
 
 .liquid .liquid-only {

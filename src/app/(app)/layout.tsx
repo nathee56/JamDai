@@ -11,15 +11,17 @@ import {
   Image,
   Bot,
   LogOut,
+  Settings,
 } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
 const navItems = [
-  { href: "/dashboard", icon: Home, label: "หน้าหลัก", mobileLabel: "หน้าหลัก" },
-  { href: "/notes", icon: FileText, label: "โน้ต", mobileLabel: "โน้ต" },
-  { href: "/gallery", icon: Image, label: "คลัง", mobileLabel: "คลัง" },
-  { href: "/ai", icon: Bot, label: "AI Chat", mobileLabel: "AI" },
+  { href: "/dashboard", icon: Home, label: "หน้าหลัก" },
+  { href: "/notes", icon: FileText, label: "โน้ต" },
+  { href: "/gallery", icon: Image, label: "คลัง" },
+  { href: "/ai", icon: Bot, label: "AI" },
+  { href: "/settings", icon: Settings, label: "ตั้งค่า" },
 ];
 
 export default function AppLayout({ children }: { children: ReactNode }) {
@@ -31,9 +33,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
   useEffect(() => setMounted(true), []);
 
   useEffect(() => {
-    if (!loading && !user) {
-      router.push("/auth");
-    }
+    if (!loading && !user) router.push("/auth");
   }, [user, loading, router]);
 
   if (loading || !mounted) {
@@ -52,26 +52,18 @@ export default function AppLayout({ children }: { children: ReactNode }) {
   const initial = (user.displayName || user.email || "?").charAt(0).toUpperCase();
 
   return (
-    <div className="min-h-dvh bg-base flex">
+    <div className="h-dvh bg-base flex overflow-hidden">
+
       {/* ── Desktop Sidebar ── */}
       <aside className="hidden md:flex w-72 h-dvh fixed top-0 left-0 flex-col bg-surface border-r border-border p-8 z-30">
-        {/* Logo */}
         <div className="mb-10">
           <span className="font-display font-bold text-3xl text-gold tracking-tight">จำได้</span>
-          <span className="block font-mono text-xs text-text-lo tracking-wider uppercase mt-1">
-            JamDai
-          </span>
+          <span className="block font-mono text-xs text-text-lo tracking-wider uppercase mt-1">JamDai</span>
         </div>
 
-        {/* Nav */}
         <nav className="flex-1 space-y-1">
           {navItems.map((item) => {
-            const isActive =
-              pathname === item.href ||
-              (item.href !== "/" && pathname.startsWith(item.href));
-            const isHome = item.href === "/" && pathname === "/";
-            const active = isActive || isHome;
-
+            const active = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
             return (
               <Link
                 key={item.href}
@@ -90,22 +82,16 @@ export default function AppLayout({ children }: { children: ReactNode }) {
           })}
         </nav>
 
-        {/* Bottom */}
         <div className="border-t border-border pt-6 space-y-4">
-          {/* User */}
           <div className="flex items-center gap-4">
             <div className="w-10 h-10 rounded-full bg-gold/20 text-gold flex items-center justify-center text-sm font-bold shrink-0">
               {initial}
             </div>
             <div className="min-w-0">
-              <p className="text-base text-text-hi font-semibold truncate">
-                {user.displayName || "ผู้ใช้งาน"}
-              </p>
+              <p className="text-base text-text-hi font-semibold truncate">{user.displayName || "ผู้ใช้งาน"}</p>
               <p className="text-xs text-text-lo truncate">{user.email}</p>
             </div>
           </div>
-
-          {/* Actions */}
           <div className="flex items-center justify-between mt-2">
             <button
               onClick={signOut}
@@ -120,7 +106,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       </aside>
 
       {/* ── Mobile Top Bar ── */}
-      <header className="md:hidden fixed top-0 left-0 right-0 h-16 flex items-center justify-between px-6 bg-base/80 backdrop-blur-2xl z-30">
+      <header className="md:hidden fixed top-0 left-0 right-0 h-16 flex items-center justify-between px-6 bg-base/80 backdrop-blur-2xl z-30 shrink-0">
         <span className="font-display font-bold text-2xl text-text-hi tracking-tight">จำได้.</span>
         <div className="flex items-center gap-3">
           <ThemeToggle />
@@ -131,29 +117,38 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       </header>
 
       {/* ── Main Content ── */}
-      <main className="flex-1 md:ml-72 pt-16 md:pt-0 pb-[96px] md:pb-0">
-        <div className="max-w-[800px] mx-auto px-6 py-8 md:px-10 md:py-14">
-          {children}
+      <main className="flex-1 md:ml-72 flex flex-col overflow-hidden">
+        {/* Mobile top spacer */}
+        <div className="md:hidden h-16 shrink-0" />
+
+        {/* Scrollable area — keyboard resizes this, NOT the bottom nav */}
+        <div className="flex-1 overflow-y-auto overscroll-contain">
+          <div className="max-w-[800px] mx-auto px-6 py-8 md:px-10 md:py-14">
+            {children}
+          </div>
+          {/* Bottom spacer inside scroll — so content isn't hidden behind nav */}
+          <div className="md:hidden h-28" />
         </div>
       </main>
 
       {/* ── Mobile Bottom Navigation ── */}
-      <div className="md:hidden fixed bottom-6 left-0 right-0 z-40 px-6 flex justify-center pointer-events-none">
-        <nav className="flex items-center justify-around bg-elevated/80 backdrop-blur-3xl border border-border/60 shadow-2xl rounded-full px-4 py-3 w-full max-w-[340px] pointer-events-auto">
+      {/* fixed position is NOT affected by keyboard resize */}
+      <div
+        className="md:hidden fixed left-0 right-0 z-40 px-6 flex justify-center"
+        style={{ bottom: "max(24px, env(safe-area-inset-bottom))" }}
+      >
+        <nav className="flex items-center justify-around bg-elevated/80 backdrop-blur-3xl border border-border/60 shadow-2xl rounded-full px-2 py-2 w-full max-w-[400px]">
           {navItems.map((item) => {
-            const isActive =
-              pathname === item.href ||
-              (item.href !== "/" && pathname.startsWith(item.href));
-            const isHome = item.href === "/" && pathname === "/";
-            const active = isActive || isHome;
-
+            const active = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 className={cn(
                   "flex items-center justify-center w-12 h-12 rounded-full transition-all duration-300",
-                  active ? "bg-gold text-text-inv shadow-lg shadow-gold/20" : "text-text-lo hover:text-text-hi"
+                  active
+                    ? "bg-gold text-text-inv shadow-lg shadow-gold/20"
+                    : "text-text-lo hover:text-text-hi"
                 )}
               >
                 <item.icon className="w-5 h-5" strokeWidth={active ? 2.5 : 2} />
@@ -162,6 +157,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
           })}
         </nav>
       </div>
+
     </div>
   );
 }

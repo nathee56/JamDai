@@ -9,10 +9,12 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import type { ChatMessage } from "@/types";
 
 const suggestions = [
-  "เดือนนี้บันทึกอะไรบ้าง?",
-  "สรุปโน้ตการเงินให้หน่อย",
-  "ความรู้ล่าสุดที่บันทึกไว้?",
-  "มีโน้ตอะไรเกี่ยวกับงานบ้าง?",
+  { label: "สรุปภาพรวม", prompt: "เดือนนี้บันทึกอะไรบ้าง? สรุปให้หน่อย" },
+  { label: "การเงิน", prompt: "สรุปโน้ตการเงินและค่าใช้จ่ายที่บันทึกไว้" },
+  { label: "ความรู้", prompt: "มีเทคนิคหรือความรู้อะไรใหม่ๆ ที่บันทึกไว้บ้าง?" },
+  { label: "งาน & โปรเจกต์", prompt: "สรุปงานที่ต้องทำหรือโน้ตเกี่ยวกับงานให้หน่อย" },
+  { label: "สุขภาพ", prompt: "บันทึกเรื่องสุขภาพล่าสุดคืออะไร?" },
+  { label: "ไอเดียใหม่", prompt: "ช่วยดึงไอเดียที่ฉันเคยจดไว้มานำเสนอหน่อย" },
 ];
 
 export default function AIPage() {
@@ -129,14 +131,14 @@ export default function AIPage() {
             <p className="text-xs text-text-lo mb-6">
               ถามเกี่ยวกับโน้ตที่คุณบันทึกไว้
             </p>
-            <div className="flex flex-wrap justify-center gap-2 max-w-sm">
+            <div className="flex flex-wrap justify-center gap-3 max-w-2xl">
               {suggestions.map((s) => (
                 <button
-                  key={s}
-                  onClick={() => handleSend(s)}
-                  className="px-3 py-1.5 rounded-md text-xs border border-border text-text-lo hover:border-gold/30 hover:text-gold transition-colors duration-150 cursor-pointer"
+                  key={s.label}
+                  onClick={() => handleSend(s.prompt)}
+                  className="px-4 py-2 rounded-2xl text-xs font-medium bg-surface border border-border text-text-lo hover:border-gold/50 hover:text-gold hover:bg-gold-mist/10 transition-all duration-200 cursor-pointer shadow-sm hover:shadow-md active:scale-[0.97]"
                 >
-                  {s}
+                  {s.label}
                 </button>
               ))}
             </div>
@@ -161,10 +163,10 @@ export default function AIPage() {
               {/* Bubble */}
               <div
                 className={cn(
-                  "px-4 py-2.5 text-sm leading-relaxed",
+                  "px-5 py-3.5 text-[15px] leading-relaxed shadow-sm",
                   msg.role === "user"
-                    ? "bg-gold text-text-inv rounded-lg rounded-br-sm"
-                    : "bg-surface border border-border text-text-hi rounded-lg rounded-bl-sm"
+                    ? "bg-gold text-text-inv rounded-[22px] rounded-br-none"
+                    : "bg-surface border border-border text-text-hi rounded-[22px] rounded-bl-none shadow-gold/5"
                 )}
               >
                 {msg.content}
@@ -204,20 +206,20 @@ export default function AIPage() {
             onKeyDown={handleKeyDown}
             placeholder="พิมพ์ข้อความ..."
             rows={1}
-            className="w-full bg-surface border border-border rounded-md px-4 py-2.5 text-sm text-text-hi placeholder:text-text-lo focus:border-gold/40 focus:outline-none resize-none max-h-24 transition-colors duration-150 leading-relaxed"
+            className="w-full bg-surface border border-border rounded-2xl px-5 py-4 text-base text-text-hi placeholder:text-text-lo/50 focus:border-gold/40 focus:ring-4 focus:ring-gold/5 focus:outline-none resize-none max-h-32 transition-all duration-200 leading-relaxed shadow-inner"
           />
         </div>
         <button
           onClick={() => handleSend()}
           disabled={!input.trim() || isLoading}
           className={cn(
-            "w-9 h-9 rounded-md flex items-center justify-center shrink-0 transition-all duration-150 cursor-pointer",
+            "w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 transition-all duration-300 cursor-pointer shadow-lg",
             input.trim()
-              ? "bg-gold text-text-inv hover:bg-gold-dim active:scale-[0.95]"
-              : "text-text-lo cursor-not-allowed"
+              ? "bg-gold text-text-inv hover:bg-gold-dim active:scale-[0.92] shadow-gold/20"
+              : "bg-surface border border-border text-text-lo cursor-not-allowed opacity-50"
           )}
         >
-          <Send className="w-4 h-4" />
+          <Send className="w-6 h-6" />
         </button>
         </div>
       </div>

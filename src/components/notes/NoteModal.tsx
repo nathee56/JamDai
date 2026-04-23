@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Modal } from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
-import { Bot, Pencil, Camera } from "lucide-react";
+import { Bot, Pencil, Camera, Mic, MicOff, Loader2 } from "lucide-react";
 import type { NoteCategory } from "@/types";
 import { categorizeNote } from "@/lib/thaillm";
 
@@ -21,7 +21,50 @@ export function NoteModal({ open, onClose, onSave }: NoteModalProps) {
   const [text, setText] = useState("");
   const [saving, setSaving] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [recognition, setRecognition] = useState<any>(null);
 
+  const toggleListening = () => {
+    if (isListening) {
+      recognition?.stop();
+      setIsListening(false);
+    } else {
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        alert("เบราว์เซอร์ของคุณไม่รองรับการพิมพ์ด้วยเสียง");
+        return;
+      }
+
+      const rec = new SpeechRecognition();
+      rec.lang = "th-TH";
+      rec.continuous = true;
+      rec.interimResults = true;
+
+      rec.onstart = () => setIsListening(true);
+      rec.onend = () => setIsListening(false);
+      rec.onerror = () => setIsListening(false);
+      
+      rec.onresult = (event: any) => {
+        let interimTranscript = "";
+        let finalTranscript = "";
+
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) {
+            finalTranscript += event.results[i][0].transcript;
+          } else {
+            interimTranscript += event.results[i][0].transcript;
+          }
+        }
+        
+        if (finalTranscript) {
+          setText(prev => prev + (prev.endsWith(" ") || prev === "" ? "" : " ") + finalTranscript);
+        }
+      };
+
+      rec.start();
+      setRecognition(rec);
+    }
+  };
   const handleSave = async () => {
     if (!text.trim()) return;
     
@@ -78,9 +121,30 @@ export function NoteModal({ open, onClose, onSave }: NoteModalProps) {
         value={text}
         onChange={(e) => setText(e.target.value)}
         placeholder="จดสิ่งที่ต้องการจำ..."
-        className="w-full min-h-[250px] sm:min-h-[300px] bg-transparent border-none p-2 text-2xl sm:text-3xl text-text-hi placeholder:text-text-lo/40 focus:outline-none resize-none mb-8 transition-all duration-300 font-sans"
-        autoFocus
+        className="w-full min-h-[200px] sm:min-h-[250px] bg-transparent border-none p-2 text-2xl sm:text-3xl text-text-hi placeholder:text-text-lo/40 focus:outline-none resize-none mb-4 transition-all duration-300 font-sans"
       />
+
+      {/* Voice Control - Center Bottom */}
+      <div className="flex justify-center mb-8">
+        <button
+          onClick={toggleListening}
+          className={cn(
+            "w-20 h-20 rounded-full flex items-center justify-center transition-all duration-500 relative",
+            isListening 
+              ? "bg-red-500 text-white shadow-2xl shadow-red-500/40 scale-110" 
+              : "bg-gold/10 text-gold hover:bg-gold/20"
+          )}
+        >
+          {isListening ? (
+            <>
+              <span className="absolute inset-0 rounded-full bg-red-500 animate-ping opacity-25" />
+              <Mic className="w-8 h-8 relative z-10" />
+            </>
+          ) : (
+            <Mic className="w-8 h-8" />
+          )}
+        </button>
+      </div>
 
       {/* AI Indicator & Save */}
       <div className="flex flex-col gap-4">

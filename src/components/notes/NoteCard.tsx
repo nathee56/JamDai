@@ -9,9 +9,10 @@ import { useState } from "react";
 interface NoteCardProps {
   note: Note;
   onDelete?: (id: string) => void;
+  onClick?: () => void;
 }
 
-export function NoteCard({ note, onDelete }: NoteCardProps) {
+export function NoteCard({ note, onDelete, onClick }: NoteCardProps) {
   const [hovered, setHovered] = useState(false);
   const catConfig = CATEGORY_CONFIG[note.category];
 
@@ -19,7 +20,8 @@ export function NoteCard({ note, onDelete }: NoteCardProps) {
     <div
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="bg-surface border border-border rounded-2xl p-6 transition-all duration-150 hover:border-border-hi hover:-translate-y-[2px] hover:shadow-lg hover:shadow-black/5 cursor-pointer flex flex-col h-full"
+      onClick={onClick}
+      className="bg-surface border border-border rounded-2xl p-6 transition-all duration-150 hover:border-border-hi hover:-translate-y-[2px] hover:shadow-lg hover:shadow-black/5 cursor-pointer flex flex-col h-full group"
     >
       {/* Image */}
       {note.imageUrl && (

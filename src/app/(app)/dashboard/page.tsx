@@ -6,9 +6,11 @@ import { getGreeting, formatThaiDate, cn } from "@/lib/utils";
 import { summarizeNotes } from "@/lib/thaillm";
 import { NoteModal } from "@/components/notes/NoteModal";
 import { NoteCard } from "@/components/notes/NoteCard";
+import { NoteDetailModal } from "@/components/notes/NoteDetailModal";
 import { Modal } from "@/components/ui/Modal";
 import { Plus, Sparkles, Quote, ChevronRight } from "lucide-react";
 import { useState, useEffect } from "react";
+import type { Note } from "@/types";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import type { NoteCategory } from "@/types";
@@ -18,6 +20,7 @@ export default function DashboardPage() {
   const { notes, loading, addNote, deleteNote } = useNotes(user?.uid);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [summaryOpen, setSummaryOpen] = useState(false);
+  const [selectedNote, setSelectedNote] = useState<Note | null>(null);
   const [summary, setSummary] = useState("");
   const [summaryLoading, setSummaryLoading] = useState(false);
 
@@ -127,12 +130,23 @@ export default function DashboardPage() {
           <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-4 space-y-4">
             {notes.map((note) => (
               <div key={note.id} className="break-inside-avoid">
-                <NoteCard note={note} onDelete={handleDelete} />
+                <NoteCard 
+                  note={note} 
+                  onDelete={handleDelete} 
+                  onClick={() => setSelectedNote(note)}
+                />
               </div>
             ))}
           </div>
         </div>
       )}
+
+      <NoteDetailModal
+        note={selectedNote}
+        open={!!selectedNote}
+        onClose={() => setSelectedNote(null)}
+        onDelete={handleDelete}
+      />
 
       {/* Summary Modal - Samsung AI Style */}
       <Modal 

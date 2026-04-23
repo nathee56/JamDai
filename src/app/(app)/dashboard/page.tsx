@@ -6,7 +6,7 @@ import { getGreeting, formatThaiDate, cn } from "@/lib/utils";
 import { summarizeNotes } from "@/lib/thaillm";
 import { NoteCard } from "@/components/notes/NoteCard";
 import { NoteModal } from "@/components/notes/NoteModal";
-import { Plus, FileText } from "lucide-react";
+import { Plus, FileText, Sparkles, Quote } from "lucide-react";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import type { NoteCategory } from "@/types";
@@ -67,30 +67,52 @@ export default function DashboardPage() {
           : "เริ่มบันทึกความทรงจำแรกของคุณ"}
       </p>
 
-      {/* AI Summary Widget */}
+      {/* AI Summary Widget - Premium Upgrade */}
       {(summaryLoading || summary) && (
-        <div className="mb-10 animate-fade-in">
-          <div className="bg-gold-glow border border-gold/20 rounded-3xl p-6 relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-4 opacity-10">
-              <Plus className="w-20 h-20 rotate-45" />
-            </div>
-            <div className="relative z-10">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-2 h-2 rounded-full bg-gold animate-pulse" />
-                <span className="font-mono text-[10px] text-gold uppercase tracking-[0.2em] font-bold">
-                  AI สรุปภาพรวม
-                </span>
+        <div className="mb-12 animate-fade-in">
+          <div className="relative group">
+            {/* Ambient Glow */}
+            <div className="absolute -inset-1 bg-gradient-to-r from-gold/20 to-gold/0 rounded-[32px] blur-xl opacity-50 group-hover:opacity-75 transition duration-1000" />
+            
+            <div className="relative bg-surface border border-gold/10 rounded-[30px] p-7 md:p-9 overflow-hidden">
+              {/* Decorative Background Elements */}
+              <div className="absolute top-0 right-0 p-6 text-gold/5 pointer-events-none">
+                <Sparkles className="w-32 h-32" />
               </div>
-              {summaryLoading ? (
-                <div className="space-y-2">
-                  <div className="h-4 bg-gold/10 rounded-full w-3/4 animate-pulse" />
-                  <div className="h-4 bg-gold/10 rounded-full w-1/2 animate-pulse" />
+              <div className="absolute -bottom-6 -left-6 text-gold/5 pointer-events-none">
+                <Quote className="w-24 h-24 rotate-180" />
+              </div>
+
+              <div className="relative z-10">
+                <div className="flex items-center gap-3 mb-5">
+                  <div className="w-10 h-10 rounded-2xl bg-gold/10 flex items-center justify-center shadow-inner">
+                    <Sparkles className="w-5 h-5 text-gold" />
+                  </div>
+                  <div>
+                    <span className="block font-display font-bold text-xs text-gold uppercase tracking-[0.25em]">
+                      AI Insights
+                    </span>
+                    <span className="block text-[10px] text-text-lo uppercase tracking-wider font-medium mt-0.5">
+                      สรุปภาพรวมจากบันทึกของคุณ
+                    </span>
+                  </div>
                 </div>
-              ) : (
-                <p className="text-lg text-text-hi leading-relaxed font-medium">
-                  {summary}
-                </p>
-              )}
+
+                {summaryLoading ? (
+                  <div className="space-y-3">
+                    <div className="h-5 bg-gold/5 rounded-full w-full animate-pulse" />
+                    <div className="h-5 bg-gold/5 rounded-full w-4/5 animate-pulse" />
+                    <div className="h-5 bg-gold/5 rounded-full w-3/5 animate-pulse" />
+                  </div>
+                ) : (
+                  <div className="relative">
+                    <Quote className="absolute -top-2 -left-2 w-8 h-8 text-gold/10 pointer-events-none" />
+                    <p className="text-xl md:text-2xl text-text-hi leading-relaxed font-semibold pl-4">
+                      {summary}
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>

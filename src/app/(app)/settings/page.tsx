@@ -10,12 +10,12 @@ import {
   Sun,
   Bell,
   Shield,
-  User,
   ChevronRight,
   Trash2,
   Camera,
   Check,
   Lock,
+  Download,
 } from "lucide-react";
 import { Modal } from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";
@@ -37,6 +37,10 @@ export default function SettingsPage() {
   const [isPinModalOpen, setIsPinModalOpen] = useState(false);
   const [tempPin, setTempPin] = useState("");
 
+  // PWA Install state
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [isInstallable, setIsInstallable] = useState(false);
+
   useEffect(() => {
     setMounted(true);
     setHasPin(!!localStorage.getItem("jamdai_pin"));
@@ -44,7 +48,29 @@ export default function SettingsPage() {
       setNewName(user.displayName || "");
       setNewPhoto(user.photoURL || "");
     }
+
+    const handleBeforeInstallPrompt = (e: any) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setIsInstallable(true);
+    };
+
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+    };
   }, [user]);
+
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === "accepted") {
+      setIsInstallable(false);
+    }
+    setDeferredPrompt(null);
+  };
 
   const handleUpdateProfile = async () => {
     setUpdating(true);
@@ -185,6 +211,22 @@ export default function SettingsPage() {
             </div>
             <ChevronRight className="w-4 h-4 text-text-lo" />
           </button>
+          
+          {isInstallable && (
+            <button 
+              onClick={handleInstallClick}
+              className="w-full flex items-center justify-between px-5 py-4 bg-gold/5 hover:bg-gold/10 transition-colors duration-150 cursor-pointer border-t border-gold/10"
+            >
+              <div className="flex items-center gap-3">
+                <Download className="w-5 h-5 text-gold" />
+                <div className="text-left">
+                  <span className="text-base text-gold font-bold block">ติดตั้งแอป JamDai</span>
+                  <span className="text-[10px] text-text-lo uppercase tracking-wider">เข้าถึงไว ใช้งานลื่นไหลกว่าเดิม</span>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-gold/50" />
+            </button>
+          )}
         </div>
       </section>
 

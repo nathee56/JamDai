@@ -149,7 +149,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
 
         {/* Scrollable area — keyboard resizes this, NOT the bottom nav */}
         <div className="flex-1 overflow-y-auto overscroll-contain">
-          <div className="max-w-[800px] mx-auto px-6 py-8 md:px-10 md:py-14">
+          <div className="max-w-[1400px] mx-auto px-6 py-8 md:px-10 md:py-12">
             {children}
           </div>
           {/* Bottom spacer inside scroll — so content isn't hidden behind nav */}

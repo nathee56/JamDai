@@ -66,43 +66,54 @@ export default function DashboardPage() {
         {formatThaiDate(new Date())}
       </p>
 
-      {/* Greeting */}
-      <h1 className="font-display font-bold text-4xl sm:text-5xl text-text-hi mb-4 tracking-tighter flex flex-col gap-1 sm:gap-2">
-        <span>{getGreeting()},</span>
-        <span className="text-gold">
-          {user?.displayName?.split(" ")[0] || "คุณ"}
-        </span>
-      </h1>
-      <p className="text-base text-text-md mb-12">
-        {notes.length > 0
-          ? `${notes.length} รายการที่บันทึกไว้`
-          : "เริ่มบันทึกความทรงจำแรกของคุณ"}
-      </p>
+      {/* Google Keep Style: Top Search/Add Bar (Desktop) */}
+      <div className="hidden md:flex justify-center mb-12">
+        <div 
+          onClick={() => setSheetOpen(true)}
+          className="w-full max-w-[600px] bg-surface border border-border rounded-xl px-4 py-3 flex items-center justify-between text-text-lo hover:shadow-md transition-all cursor-text"
+        >
+          <span className="text-base font-medium">จดบันทึกใหม่...</span>
+          <div className="flex items-center gap-2">
+            <Plus className="w-5 h-5" />
+          </div>
+        </div>
+      </div>
 
-      {/* Quick Add (The Hero Button) */}
-      <div className="flex flex-col items-center justify-center mb-24 md:mb-16">
+      {/* Greeting & Info (Mobile only or reduced for Desktop) */}
+      <div className="md:hidden">
+        <h1 className="font-display font-bold text-4xl sm:text-5xl text-text-hi mb-4 tracking-tighter flex flex-col gap-1 sm:gap-2">
+          <span>{getGreeting()},</span>
+          <span className="text-gold">
+            {user?.displayName?.split(" ")[0] || "คุณ"}
+          </span>
+        </h1>
+        <p className="text-base text-text-md mb-12">
+          {notes.length > 0
+            ? `${notes.length} รายการที่บันทึกไว้`
+            : "เริ่มบันทึกความทรงจำแรกของคุณ"}
+        </p>
+      </div>
+
+      {/* Quick Add (Mobile Hero Button) */}
+      <div className="md:hidden flex flex-col items-center justify-center mb-24">
         <div className="relative">
           <button
             onClick={() => setSheetOpen(true)}
-            className="relative flex items-center justify-center w-28 h-28 md:w-32 md:h-32 bg-gradient-to-br from-gold to-gold-dim text-base shadow-[0_0_40px_-5px_rgba(240,180,41,0.4)] hover:shadow-[0_0_60px_-5px_rgba(240,180,41,0.5)] rounded-full transition-all duration-500 cursor-pointer active:scale-90 group overflow-hidden"
-            aria-label="เพิ่มโน้ตใหม่"
+            className="relative flex items-center justify-center w-28 h-28 bg-gradient-to-br from-gold to-gold-dim text-base shadow-[0_0_40px_-5px_rgba(240,180,41,0.4)] rounded-full transition-all duration-500 cursor-pointer active:scale-90 group"
           >
-            {/* Glossy Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-white/20 opacity-50" />
-            <Plus className="w-12 h-12 md:w-16 md:h-16 text-text-inv relative z-10 transition-transform duration-500 group-hover:rotate-90 group-hover:scale-110" strokeWidth={3} />
+            <Plus className="w-12 h-12 text-text-inv" strokeWidth={3} />
           </button>
         </div>
-        
         <span className="mt-4 font-display font-bold text-xs text-gold uppercase tracking-[0.3em] opacity-80">
           จดบันทึกใหม่
         </span>
       </div>
 
-      {/* Recent Notes Section */}
+      {/* Keep Style Masonry Grid */}
       {notes.length > 0 && (
         <div className="space-y-6 animate-fade-in">
           <div className="flex items-center justify-between px-1">
-            <h2 className="text-xl font-bold text-text-hi tracking-tight">บันทึกล่าสุด</h2>
+            <h2 className="text-xl font-bold text-text-hi tracking-tight">บันทึกของคุณ</h2>
             <Link 
               href="/notes" 
               className="text-sm font-medium text-gold hover:text-gold-dim flex items-center gap-1 transition-colors"
@@ -112,9 +123,12 @@ export default function DashboardPage() {
             </Link>
           </div>
           
-          <div className="flex flex-col gap-4">
-            {recentNotes.map((note) => (
-              <NoteCard key={note.id} note={note} onDelete={handleDelete} />
+          {/* Columns for Masonry effect */}
+          <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-4 space-y-4">
+            {notes.map((note) => (
+              <div key={note.id} className="break-inside-avoid">
+                <NoteCard note={note} onDelete={handleDelete} />
+              </div>
             ))}
           </div>
         </div>

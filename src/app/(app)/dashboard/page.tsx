@@ -127,40 +127,64 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* Summary Modal */}
+      {/* Summary Modal - Samsung AI Style */}
       <Modal 
         open={summaryOpen} 
         onClose={() => setSummaryOpen(false)}
-        title="AI Insights"
       >
-        <div className="relative">
-          <div className="absolute -top-10 -right-6 text-gold/5 pointer-events-none">
-            <Sparkles className="w-24 h-24" />
+        <div className="relative p-1 sm:p-2">
+          {/* Background Decorative Gradient */}
+          <div className="absolute -top-20 -right-20 w-64 h-64 bg-gold/10 rounded-full blur-[80px] pointer-events-none" />
+          <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-gold/5 rounded-full blur-[80px] pointer-events-none" />
+
+          {/* Header */}
+          <div className="flex items-center gap-3 mb-8">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-gold to-gold-dim flex items-center justify-center shadow-lg shadow-gold/20">
+              <Sparkles className="w-6 h-6 text-text-inv" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-display font-bold text-text-hi tracking-tight">AI Insights</h2>
+              <p className="text-[10px] text-gold uppercase tracking-[0.2em] font-bold">Powered by JamDai Intelligence</p>
+            </div>
           </div>
           
-          {summaryLoading ? (
-            <div className="space-y-4">
-              <div className="h-6 bg-gold/5 rounded-full w-full animate-pulse" />
-              <div className="h-6 bg-gold/5 rounded-full w-4/5 animate-pulse" />
-              <div className="h-6 bg-gold/5 rounded-full w-3/5 animate-pulse" />
-            </div>
-          ) : (
-            <div className="relative">
-              <Quote className="absolute -top-3 -left-3 w-10 h-10 text-gold/10" />
-              <p className="text-2xl md:text-3xl text-text-hi leading-relaxed font-semibold pl-6">
-                {summary || "กำลังรวบรวมข้อมูล..."}
-              </p>
-            </div>
-          )}
+          <div className="relative min-h-[160px] flex flex-col justify-center">
+            {summaryLoading ? (
+              <div className="space-y-4">
+                <div className="h-4 bg-gold/5 rounded-full w-full animate-pulse" />
+                <div className="h-4 bg-gold/5 rounded-full w-[90%] animate-pulse [animation-delay:0.2s]" />
+                <div className="h-4 bg-gold/5 rounded-full w-[75%] animate-pulse [animation-delay:0.4s]" />
+              </div>
+            ) : (
+              <div className="animate-fade-in">
+                <p className="text-2xl md:text-3xl text-text-hi leading-[1.4] font-medium tracking-tight">
+                  {summary || "ยังไม่มีข้อมูลเพียงพอสำหรับการสรุปในขณะนี้ ลองจดบันทึกเพิ่มสิ!"}
+                </p>
+              </div>
+            )}
+          </div>
           
-          <div className="mt-10 pt-6 border-t border-border">
-            <p className="text-xs text-text-lo uppercase tracking-widest font-bold mb-4">หมวดหมู่ที่พบบ่อย</p>
-            <div className="flex flex-wrap gap-2">
-              {Array.from(new Set(notes.map(n => n.category))).slice(0, 4).map(cat => (
-                <span key={cat} className="px-3 py-1.5 rounded-lg bg-surface border border-border text-xs text-text-md font-medium">
-                  {cat}
-                </span>
-              ))}
+          <div className="mt-12 flex flex-col gap-6">
+            <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+            
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="space-y-2">
+                <p className="text-[10px] text-text-lo uppercase tracking-widest font-bold">คัดกรองจาก</p>
+                <div className="flex gap-1.5">
+                  {Array.from(new Set(notes.map(n => n.category))).slice(0, 3).map(cat => (
+                    <span key={cat} className="px-2.5 py-1 rounded-lg bg-gold/5 border border-gold/10 text-[10px] text-gold font-bold">
+                      {cat}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              
+              <button 
+                onClick={() => setSummaryOpen(false)}
+                className="px-8 py-3.5 bg-text-hi text-text-inv rounded-2xl text-sm font-bold hover:opacity-90 transition-opacity active:scale-[0.98]"
+              >
+                รับทราบ
+              </button>
             </div>
           </div>
         </div>

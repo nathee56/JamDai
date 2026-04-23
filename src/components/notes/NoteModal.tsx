@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Modal } from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
-import { Bot, Pencil, Camera, Mic, MicOff, Loader2 } from "lucide-react";
+import { Bot, Pencil, Camera, Mic, MicOff, Loader2, Bell } from "lucide-react";
 import type { NoteCategory } from "@/types";
 import { categorizeNote, detectReminders } from "@/lib/thaillm";
 import { useEffect, useRef } from "react";

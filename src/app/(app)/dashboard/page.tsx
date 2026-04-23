@@ -4,9 +4,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { useNotes } from "@/hooks/useNotes";
 import { getGreeting, formatThaiDate, cn } from "@/lib/utils";
 import { summarizeNotes } from "@/lib/thaillm";
-import { NoteCard } from "@/components/notes/NoteCard";
 import { NoteModal } from "@/components/notes/NoteModal";
-import { Plus, FileText, Sparkles, Quote } from "lucide-react";
+import { Plus, Sparkles, Quote } from "lucide-react";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import type { NoteCategory } from "@/types";
@@ -39,13 +38,6 @@ export default function DashboardPage() {
     await addNote(text, category);
     toast.success("บันทึกโน้ตสำเร็จ");
   };
-
-  const handleDelete = async (id: string) => {
-    await deleteNote(id);
-    toast.success("ลบโน้ตแล้ว");
-  };
-
-  const recentNotes = notes.slice(0, 6);
 
   return (
     <>
@@ -141,36 +133,10 @@ export default function DashboardPage() {
         </span>
       </div>
 
-      {/* Recent Notes */}
-      <div className="flex items-center justify-between mb-6">
-        <span className="font-mono text-xs text-text-lo uppercase tracking-wider">
-          บันทึกล่าสุด
-        </span>
-      </div>
-
-      {loading ? (
-        <div className="flex flex-col gap-6">
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="skeleton h-48 sm:h-64 rounded-3xl" />
-          ))}
-        </div>
-      ) : recentNotes.length > 0 ? (
-        <div className="flex flex-col gap-6">
-          {recentNotes.map((note) => (
-            <NoteCard key={note.id} note={note} onDelete={handleDelete} />
-          ))}
-        </div>
-      ) : (
-        <div className="text-center py-16 px-4 bg-transparent border border-dashed border-border rounded-2xl mt-4">
-          <div className="w-16 h-16 mx-auto flex items-center justify-center mb-4 text-gold/50">
-            <FileText className="w-10 h-10" strokeWidth={1.5} />
-          </div>
-          <p className="text-text-hi font-semibold text-lg mb-1">ยังไม่มีโน้ตในระบบ</p>
-          <p className="text-text-lo text-sm">
-            กดปุ่ม "+" ด้านบนเพื่อเริ่มบันทึกโน้ตแรกของคุณ
-          </p>
-        </div>
-      )}
+      {/* Recent Notes logic removed as per user request */}
+    </>
+  );
+}
 
       <NoteModal
         open={sheetOpen}

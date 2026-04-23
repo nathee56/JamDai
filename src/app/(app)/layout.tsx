@@ -141,6 +141,9 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       </main>
 
       {/* ── Mobile Bottom Navigation ── */}
+      {/* Background Blur Overlay for scrolling content */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-base via-base/80 to-transparent backdrop-blur-md pointer-events-none z-30" />
+      
       {/* fixed position is NOT affected by keyboard resize */}
       <div
         className="md:hidden fixed left-0 right-0 z-40 px-6 flex justify-center"

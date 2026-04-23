@@ -5,8 +5,11 @@ import { useNotes } from "@/hooks/useNotes";
 import { getGreeting, formatThaiDate, cn } from "@/lib/utils";
 import { summarizeNotes } from "@/lib/thaillm";
 import { NoteModal } from "@/components/notes/NoteModal";
-import { Plus, Sparkles, Quote } from "lucide-react";
+import { NoteCard } from "@/components/notes/NoteCard";
+import { Modal } from "@/components/ui/Modal";
+import { Plus, Sparkles, Quote, ChevronRight } from "lucide-react";
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import toast from "react-hot-toast";
 import type { NoteCategory } from "@/types";
 
@@ -14,6 +17,7 @@ export default function DashboardPage() {
   const { user } = useAuth();
   const { notes, loading, addNote, deleteNote } = useNotes(user?.uid);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [summaryOpen, setSummaryOpen] = useState(false);
   const [summary, setSummary] = useState("");
   const [summaryLoading, setSummaryLoading] = useState(false);
 
@@ -39,8 +43,31 @@ export default function DashboardPage() {
     toast.success("บันทึกโน้ตสำเร็จ");
   };
 
+  const handleDelete = async (id: string) => {
+    await deleteNote(id);
+    toast.success("ลบโน้ตแล้ว");
+  };
+
+  const recentNotes = notes.slice(0, 3);
+
   return (
     <>
+      {/* AI Summary Trigger - Overlays layout top bar on mobile */}
+      <div className="md:hidden fixed top-3 right-20 z-40">
+        <button
+          onClick={() => setSummaryOpen(true)}
+          disabled={summaryLoading && !summary}
+          className={cn(
+            "w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300",
+            summaryLoading && !summary
+              ? "bg-border text-text-lo"
+              : "bg-gold/10 text-gold hover:bg-gold/20 shadow-lg shadow-gold/5"
+          )}
+        >
+          <Sparkles className={cn("w-5 h-5", summaryLoading ? "animate-pulse" : "")} />
+        </button>
+      </div>
+
       {/* Date */}
       <p className="font-mono text-xs text-text-lo uppercase tracking-wider mb-2">
         {formatThaiDate(new Date())}
@@ -53,73 +80,18 @@ export default function DashboardPage() {
           {user?.displayName?.split(" ")[0] || "คุณ"}
         </span>
       </h1>
-      <p className="text-base text-text-md mb-8">
+      <p className="text-base text-text-md mb-12">
         {notes.length > 0
           ? `${notes.length} รายการที่บันทึกไว้`
           : "เริ่มบันทึกความทรงจำแรกของคุณ"}
       </p>
 
-      {/* AI Summary Widget - Premium Upgrade */}
-      {(summaryLoading || summary) && (
-        <div className="mb-12 animate-fade-in">
-          <div className="relative group">
-            {/* Ambient Glow */}
-            <div className="absolute -inset-1 bg-gradient-to-r from-gold/20 to-gold/0 rounded-[32px] blur-xl opacity-50 group-hover:opacity-75 transition duration-1000" />
-            
-            <div className="relative bg-surface border border-gold/10 rounded-[30px] p-7 md:p-9 overflow-hidden">
-              {/* Decorative Background Elements */}
-              <div className="absolute top-0 right-0 p-6 text-gold/5 pointer-events-none">
-                <Sparkles className="w-32 h-32" />
-              </div>
-              <div className="absolute -bottom-6 -left-6 text-gold/5 pointer-events-none">
-                <Quote className="w-24 h-24 rotate-180" />
-              </div>
-
-              <div className="relative z-10">
-                <div className="flex items-center gap-3 mb-5">
-                  <div className="w-10 h-10 rounded-2xl bg-gold/10 flex items-center justify-center shadow-inner">
-                    <Sparkles className="w-5 h-5 text-gold" />
-                  </div>
-                  <div>
-                    <span className="block font-display font-bold text-xs text-gold uppercase tracking-[0.25em]">
-                      AI Insights
-                    </span>
-                    <span className="block text-[10px] text-text-lo uppercase tracking-wider font-medium mt-0.5">
-                      สรุปภาพรวมจากบันทึกของคุณ
-                    </span>
-                  </div>
-                </div>
-
-                {summaryLoading ? (
-                  <div className="space-y-3">
-                    <div className="h-5 bg-gold/5 rounded-full w-full animate-pulse" />
-                    <div className="h-5 bg-gold/5 rounded-full w-4/5 animate-pulse" />
-                    <div className="h-5 bg-gold/5 rounded-full w-3/5 animate-pulse" />
-                  </div>
-                ) : (
-                  <div className="relative">
-                    <Quote className="absolute -top-2 -left-2 w-8 h-8 text-gold/10 pointer-events-none" />
-                    <p className="text-xl md:text-2xl text-text-hi leading-relaxed font-semibold pl-4">
-                      {summary}
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Quick Add (The Hero Button) */}
-      <div className="flex flex-col items-center justify-center mb-16 mt-6">
+      {/* Quick Add (The Hero Button) - Removed Pulse */}
+      <div className="flex flex-col items-center justify-center mb-16">
         <div className="relative">
-          {/* Pulsing Outer Rings */}
-          <div className="absolute inset-0 rounded-full bg-gold/20 animate-ping opacity-20 scale-125" />
-          <div className="absolute inset-0 rounded-full bg-gold/10 animate-ping opacity-40 [animation-delay:0.5s] scale-150" />
-          
           <button
             onClick={() => setSheetOpen(true)}
-            className="relative flex items-center justify-center w-28 h-28 md:w-32 md:h-32 bg-gradient-to-br from-gold to-gold-dim text-base shadow-[0_0_40px_-5px_rgba(240,180,41,0.5)] hover:shadow-[0_0_60px_-5px_rgba(240,180,41,0.6)] rounded-full transition-all duration-500 cursor-pointer active:scale-90 group overflow-hidden"
+            className="relative flex items-center justify-center w-28 h-28 md:w-32 md:h-32 bg-gradient-to-br from-gold to-gold-dim text-base shadow-[0_0_40px_-5px_rgba(240,180,41,0.4)] hover:shadow-[0_0_60px_-5px_rgba(240,180,41,0.5)] rounded-full transition-all duration-500 cursor-pointer active:scale-90 group overflow-hidden"
             aria-label="เพิ่มโน้ตใหม่"
           >
             {/* Glossy Overlay */}
@@ -128,10 +100,71 @@ export default function DashboardPage() {
           </button>
         </div>
         
-        <span className="mt-4 font-display font-bold text-xs text-gold uppercase tracking-[0.3em] opacity-80 animate-pulse">
+        <span className="mt-4 font-display font-bold text-xs text-gold uppercase tracking-[0.3em] opacity-80">
           จดบันทึกใหม่
         </span>
       </div>
+
+      {/* Recent Notes Section */}
+      {notes.length > 0 && (
+        <div className="space-y-6 animate-fade-in">
+          <div className="flex items-center justify-between px-1">
+            <h2 className="text-xl font-bold text-text-hi tracking-tight">บันทึกล่าสุด</h2>
+            <Link 
+              href="/notes" 
+              className="text-sm font-medium text-gold hover:text-gold-dim flex items-center gap-1 transition-colors"
+            >
+              ดูทั้งหมด
+              <ChevronRight className="w-4 h-4" />
+            </Link>
+          </div>
+          
+          <div className="flex flex-col gap-4">
+            {recentNotes.map((note) => (
+              <NoteCard key={note.id} note={note} onDelete={handleDelete} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Summary Modal */}
+      <Modal 
+        open={summaryOpen} 
+        onClose={() => setSummaryOpen(false)}
+        title="AI Insights"
+      >
+        <div className="relative">
+          <div className="absolute -top-10 -right-6 text-gold/5 pointer-events-none">
+            <Sparkles className="w-24 h-24" />
+          </div>
+          
+          {summaryLoading ? (
+            <div className="space-y-4">
+              <div className="h-6 bg-gold/5 rounded-full w-full animate-pulse" />
+              <div className="h-6 bg-gold/5 rounded-full w-4/5 animate-pulse" />
+              <div className="h-6 bg-gold/5 rounded-full w-3/5 animate-pulse" />
+            </div>
+          ) : (
+            <div className="relative">
+              <Quote className="absolute -top-3 -left-3 w-10 h-10 text-gold/10" />
+              <p className="text-2xl md:text-3xl text-text-hi leading-relaxed font-semibold pl-6">
+                {summary || "กำลังรวบรวมข้อมูล..."}
+              </p>
+            </div>
+          )}
+          
+          <div className="mt-10 pt-6 border-t border-border">
+            <p className="text-xs text-text-lo uppercase tracking-widest font-bold mb-4">หมวดหมู่ที่พบบ่อย</p>
+            <div className="flex flex-wrap gap-2">
+              {Array.from(new Set(notes.map(n => n.category))).slice(0, 4).map(cat => (
+                <span key={cat} className="px-3 py-1.5 rounded-lg bg-surface border border-border text-xs text-text-md font-medium">
+                  {cat}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </Modal>
 
       <NoteModal
         open={sheetOpen}
@@ -141,3 +174,4 @@ export default function DashboardPage() {
     </>
   );
 }
+

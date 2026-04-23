@@ -175,37 +175,6 @@ export default function SettingsPage() {
             </div>
           </div>
 
-          {/* UI Style */}
-          <div className="p-4">
-            <p className="text-[10px] text-text-lo uppercase tracking-widest font-bold mb-3 px-1">สไตล์อินเทอร์เฟซ</p>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                onClick={() => setUIStyle("minimal")}
-                className={cn(
-                  "flex flex-col items-center justify-center gap-1 py-4 rounded-xl border transition-all duration-300",
-                  uiStyle === "minimal" ? "bg-gold/10 border-gold text-gold" : "bg-surface border-border text-text-lo"
-                )}
-              >
-                <span className="text-sm font-bold">Minimal</span>
-                <span className="text-[9px] uppercase tracking-tighter opacity-60">เรียบง่าย สบายตา</span>
-              </button>
-              <button
-                onClick={() => setUIStyle("liquid")}
-                className={cn(
-                  "relative flex flex-col items-center justify-center gap-1 py-4 rounded-xl border transition-all duration-500 overflow-hidden group",
-                  uiStyle === "liquid" 
-                    ? "bg-gold/20 border-gold text-gold shadow-[0_0_20px_-5px_rgba(240,180,41,0.3)]" 
-                    : "bg-surface border-border text-text-lo"
-                )}
-              >
-                {uiStyle === "liquid" && (
-                  <div className="absolute inset-0 bg-gradient-to-br from-gold/10 via-transparent to-transparent animate-pulse" />
-                )}
-                <span className="relative z-10 text-sm font-bold">Liquid Glass</span>
-                <span className="relative z-10 text-[9px] uppercase tracking-tighter opacity-60">หรูหรา ลื่นไหล</span>
-              </button>
-            </div>
-          </div>
         </div>
       </section>
 

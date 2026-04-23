@@ -133,9 +133,7 @@ export default function DashboardPage() {
         onClose={() => setSummaryOpen(false)}
       >
         <div className="relative p-1 sm:p-2">
-          {/* Background Decorative Gradient */}
-          <div className="absolute -top-20 -right-20 w-64 h-64 bg-gold/10 rounded-full blur-[80px] pointer-events-none" />
-          <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-gold/5 rounded-full blur-[80px] pointer-events-none" />
+          {/* Removed Decorative Gradient */}
 
           {/* Header */}
           <div className="flex items-center gap-3 mb-8">

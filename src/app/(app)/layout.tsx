@@ -65,16 +65,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
     <div className="h-dvh bg-base flex overflow-hidden relative">
       {isLocked && <LockScreen onUnlock={() => setIsLocked(false)} />}
 
-      {/* ── Liquid Background Decor (Apple Mesh Style) ── */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden liquid-only opacity-0 transition-opacity duration-1000 z-0">
-        <div className="absolute top-[-20%] left-[-10%] w-[80%] h-[80%] rounded-full bg-gold/40 blur-[120px] animate-liquid" />
-        <div className="absolute bottom-[-20%] right-[-10%] w-[80%] h-[80%] rounded-full bg-gold/20 blur-[120px] animate-liquid [animation-delay:-8s]" />
-        <div className="absolute top-[30%] right-[0%] w-[60%] h-[60%] rounded-full bg-blue-600/20 blur-[120px] animate-liquid [animation-delay:-12s]" />
-        <div className="absolute bottom-[10%] left-[-10%] w-[70%] h-[70%] rounded-full bg-purple-600/15 blur-[120px] animate-liquid [animation-delay:-18s]" />
-        
-        {/* Grain overlay */}
-        <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
-      </div>
+      {/* Removed Liquid Background Decor */}
 
       {/* ── Desktop Sidebar ── */}
       <aside className={cn(

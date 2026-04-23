@@ -33,6 +33,7 @@ export async function createNote(
     text,
     category,
     imageUrl: imageUrl || null,
+    pinned: false,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   });
@@ -41,7 +42,7 @@ export async function createNote(
 
 export async function updateNote(
   noteId: string,
-  data: Partial<Pick<Note, "text" | "category" | "imageUrl">>
+  data: Partial<Pick<Note, "text" | "category" | "imageUrl" | "pinned">>
 ): Promise<void> {
   const docRef = doc(db, NOTES_COLLECTION, noteId);
   await updateDoc(docRef, {
@@ -80,6 +81,7 @@ export async function getNotes(
     text: doc.data().text,
     category: doc.data().category,
     imageUrl: doc.data().imageUrl || undefined,
+    pinned: doc.data().pinned || false,
     createdAt: timestampToDate(doc.data().createdAt),
     updatedAt: timestampToDate(doc.data().updatedAt),
   }));
@@ -102,6 +104,7 @@ export function subscribeToNotes(
       text: doc.data().text,
       category: doc.data().category,
       imageUrl: doc.data().imageUrl || undefined,
+      pinned: doc.data().pinned || false,
       createdAt: timestampToDate(doc.data().createdAt),
       updatedAt: timestampToDate(doc.data().updatedAt),
     }));

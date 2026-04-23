@@ -62,6 +62,7 @@
   --animate-pulse-dot: pulse-dot 2s ease-in-out infinite;
   --animate-shake: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
   --animate-fade-in: fade-in 0.3s ease-out;
+  --animate-indicator-in: indicator-in 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* ── Keyframes ── */
@@ -102,10 +103,21 @@
   to { opacity: 1; }
 }
 
+@keyframes indicator-in {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(100%); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 /* ── Base Styles ── */
 * {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
 }
 
 html {
@@ -164,46 +176,48 @@ body {
   border-radius: var(--radius-md);
 }
 
-/* ── Liquid Glass (iOS 26 Style) ── Solid Glass Refinement ── */
-:root.liquid {
-  --liquid-blur: 24px;
-  --liquid-opacity: 0.95;
-  --liquid-border: var(--color-border);
-  --liquid-glow: transparent;
+/* ── Masonry Layout ── */
+.masonry-grid {
+  columns: 2;
+  column-gap: 12px;
 }
 
-.liquid .bg-surface,
-.liquid .bg-elevated {
-  background-color: var(--color-surface);
-  backdrop-filter: blur(var(--liquid-blur));
-  border: 1px solid var(--liquid-border);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  position: relative;
-  overflow: hidden;
+.masonry-grid > * {
+  break-inside: avoid;
+  margin-bottom: 12px;
 }
 
-.liquid .bg-base {
-  background-color: var(--color-base);
-  background-image: none;
+@media (min-width: 768px) {
+  .masonry-grid {
+    columns: 3;
+  }
 }
 
-/* Liquid Mesh Gradient Components - Removed extreme colors */
-.liquid-blob {
-  display: none;
+@media (min-width: 1024px) {
+  .masonry-grid {
+    columns: 4;
+  }
 }
 
-/* Fluid Animations */
-@keyframes liquid-wavy {
-  0% { transform: translate(0, 0) rotate(0deg) scale(1); }
-  33% { transform: translate(100px, -50px) rotate(120deg) scale(1.2); }
-  66% { transform: translate(-50px, 80px) rotate(240deg) scale(0.8); }
-  100% { transform: translate(0, 0) rotate(360deg) scale(1); }
+/* ── Long Press Context Menu ── */
+.context-menu-overlay {
+  animation: fade-in 0.15s ease-out;
 }
 
-.animate-liquid {
-  animation: liquid-wavy 25s linear infinite;
+.context-menu {
+  animation: slide-up 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.liquid .liquid-only {
-  opacity: 1;
+/* ── Bottom Sheet ── */
+.bottom-sheet-enter {
+  animation: slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ── Safe Area ── */
+.safe-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
 }

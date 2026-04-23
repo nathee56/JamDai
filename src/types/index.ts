@@ -12,6 +12,7 @@ export interface Note {
   text: string;
   category: NoteCategory;
   imageUrl?: string;
+  pinned?: boolean;
   createdAt: Date;
   updatedAt: Date;
 }

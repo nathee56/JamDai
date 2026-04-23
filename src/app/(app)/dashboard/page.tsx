@@ -2,24 +2,21 @@
 
 import { useAuth } from "@/hooks/useAuth";
 import { useNotes } from "@/hooks/useNotes";
-import { getGreeting, formatThaiDate, cn } from "@/lib/utils";
+import { getGreeting, formatThaiDate } from "@/lib/utils";
 import { summarizeNotes } from "@/lib/thaillm";
 import { NoteModal } from "@/components/notes/NoteModal";
 import { NoteCard } from "@/components/notes/NoteCard";
 import { NoteDetailModal } from "@/components/notes/NoteDetailModal";
-import { Modal } from "@/components/ui/Modal";
-import { Plus, Sparkles, Quote, ChevronRight } from "lucide-react";
+import { Plus, Sparkles, ChevronRight } from "lucide-react";
 import { useState, useEffect } from "react";
-import type { Note } from "@/types";
+import type { Note, NoteCategory } from "@/types";
 import Link from "next/link";
 import toast from "react-hot-toast";
-import type { NoteCategory } from "@/types";
 
 export default function DashboardPage() {
   const { user } = useAuth();
-  const { notes, loading, addNote, deleteNote } = useNotes(user?.uid);
+  const { notes, loading, addNote, deleteNote, updateNote, togglePin } = useNotes(user?.uid);
   const [sheetOpen, setSheetOpen] = useState(false);
-  const [summaryOpen, setSummaryOpen] = useState(false);
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
   const [summary, setSummary] = useState("");
   const [summaryLoading, setSummaryLoading] = useState(false);
@@ -41,15 +38,6 @@ export default function DashboardPage() {
     }
   }, [notes, loading, summary]);
 
-  useEffect(() => {
-    const btn = document.getElementById("ai-summary-btn");
-    if (btn) {
-      const handleClick = () => setSummaryOpen(true);
-      btn.addEventListener("click", handleClick);
-      return () => btn.removeEventListener("click", handleClick);
-    }
-  }, []);
-
   const handleSave = async (text: string, category: NoteCategory) => {
     await addNote(text, category);
     toast.success("บันทึกโน้ตสำเร็จ");
@@ -57,157 +45,139 @@ export default function DashboardPage() {
 
   const handleDelete = async (id: string) => {
     await deleteNote(id);
+    setSelectedNote(null);
     toast.success("ลบโน้ตแล้ว");
   };
 
-  const recentNotes = notes.slice(0, 3);
+  const handlePin = async (id: string) => {
+    await togglePin(id);
+  };
+
+  const handleUpdate = async (noteId: string, data: Partial<Pick<Note, "text" | "category">>) => {
+    await updateNote(noteId, data);
+  };
+
+  const recentNotes = notes.slice(0, 6);
 
   return (
     <>
       {/* Date */}
-      <p className="font-mono text-xs text-text-lo uppercase tracking-wider mb-2 mt-2">
+      <p className="font-mono text-[10px] text-text-lo uppercase tracking-wider mb-2">
         {formatThaiDate(new Date())}
       </p>
 
-      {/* Google Keep Style: Top Search/Add Bar (Desktop) */}
-      <div className="hidden md:flex justify-center mb-12">
-        <div 
-          onClick={() => setSheetOpen(true)}
-          className="w-full max-w-[600px] bg-surface border border-border rounded-xl px-4 py-3 flex items-center justify-between text-text-lo hover:shadow-md transition-all cursor-text"
-        >
-          <span className="text-base font-medium">จดบันทึกใหม่...</span>
-          <div className="flex items-center gap-2">
-            <Plus className="w-5 h-5" />
+      {/* Greeting */}
+      <h1 className="font-display font-bold text-3xl sm:text-4xl text-text-hi mb-1 tracking-tighter italic">
+        {getGreeting()},
+      </h1>
+      <h2 className="font-display font-bold text-3xl sm:text-4xl text-gold mb-6 tracking-tighter italic">
+        {user?.displayName?.split(" ")[0] || "คุณ"}
+      </h2>
+
+      <p className="text-sm text-text-md mb-8">
+        {notes.length > 0
+          ? `${notes.length} รายการที่บันทึกไว้`
+          : "เริ่มบันทึกความทรงจำแรกของคุณ"}
+      </p>
+
+      {/* AI Summary Widget — Samsung Daily Summary inspired */}
+      {notes.length > 0 && (
+        <div className="mb-8 bg-surface border border-border rounded-[14px] p-5 transition-all duration-300 animate-fade-in">
+          <div className="flex items-start gap-3">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-gold/20 to-gold/5 flex items-center justify-center shrink-0">
+              <Sparkles className="w-4.5 h-4.5 text-gold" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-[10px] font-mono text-gold uppercase tracking-wider mb-0.5">
+                สรุปวันนี้
+              </p>
+              {summaryLoading ? (
+                <div className="space-y-2 mt-2">
+                  <div className="h-3 bg-gold/5 rounded-full w-full animate-pulse" />
+                  <div className="h-3 bg-gold/5 rounded-full w-[85%] animate-pulse" style={{ animationDelay: "0.15s" }} />
+                  <div className="h-3 bg-gold/5 rounded-full w-[65%] animate-pulse" style={{ animationDelay: "0.3s" }} />
+                </div>
+              ) : (
+                <p className="text-sm text-text-hi leading-relaxed animate-fade-in">
+                  {summary || "กำลังวิเคราะห์โน้ตของคุณ..."}
+                </p>
+              )}
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
-      {/* Greeting & Info (Mobile only or reduced for Desktop) */}
-      <div className="md:hidden">
-        <h1 className="font-display font-bold text-4xl sm:text-5xl text-text-hi mb-4 tracking-tighter flex flex-col gap-1 sm:gap-2">
-          <span>{getGreeting()},</span>
-          <span className="text-gold">
-            {user?.displayName?.split(" ")[0] || "คุณ"}
-          </span>
-        </h1>
-        <p className="text-base text-text-md mb-12">
-          {notes.length > 0
-            ? `${notes.length} รายการที่บันทึกไว้`
-            : "เริ่มบันทึกความทรงจำแรกของคุณ"}
-        </p>
-      </div>
-
-      {/* Quick Add (Mobile Hero Button) */}
-      <div className="md:hidden flex flex-col items-center justify-center mb-24">
+      {/* ★ Hero "+" Button — จุดเด่นของ JamDai (Mobile) */}
+      <div className="md:hidden flex flex-col items-center justify-center mb-16 mt-4">
         <div className="relative">
+          {/* Outer glow pulse ring */}
+          <div className="absolute inset-0 rounded-full bg-gold/20 animate-ping" style={{ animationDuration: "3s" }} />
+          {/* Glow ring */}
+          <div className="absolute -inset-3 rounded-full bg-gradient-to-br from-gold/10 to-transparent blur-xl" />
+          {/* Main button */}
           <button
             onClick={() => setSheetOpen(true)}
-            className="relative flex items-center justify-center w-28 h-28 bg-gradient-to-br from-gold to-gold-dim text-base shadow-[0_0_40px_-5px_rgba(240,180,41,0.4)] rounded-full transition-all duration-500 cursor-pointer active:scale-90 group"
+            className="relative flex items-center justify-center w-28 h-28 bg-gradient-to-br from-gold to-gold-dim text-text-inv rounded-full transition-all duration-500 cursor-pointer active:scale-90 group"
+            style={{
+              boxShadow: "0 0 50px -5px rgba(240,180,41,0.45), 0 0 20px -5px rgba(240,180,41,0.3)",
+            }}
           >
-            <Plus className="w-12 h-12 text-text-inv" strokeWidth={3} />
+            <Plus className="w-12 h-12" strokeWidth={2.5} />
           </button>
         </div>
-        <span className="mt-4 font-display font-bold text-xs text-gold uppercase tracking-[0.3em] opacity-80">
+        <span className="mt-5 font-mono font-semibold text-[10px] text-gold uppercase tracking-[0.3em] opacity-70">
           จดบันทึกใหม่
         </span>
       </div>
 
-      {/* Keep Style Masonry Grid */}
-      {notes.length > 0 && (
-        <div className="space-y-6 animate-fade-in">
+      {/* Quick Add — Desktop */}
+      <div className="hidden md:flex justify-center mb-10">
+        <div
+          onClick={() => setSheetOpen(true)}
+          className="w-full max-w-[600px] bg-surface border border-border rounded-[14px] px-5 py-3.5 flex items-center justify-between text-text-lo hover:border-border-hi transition-all cursor-text active:scale-[0.99]"
+        >
+          <span className="text-sm font-medium">จดบันทึกใหม่...</span>
+          <Plus className="w-5 h-5" />
+        </div>
+      </div>
+
+      {/* Recent Notes */}
+      {recentNotes.length > 0 && (
+        <div className="space-y-4 animate-fade-in">
           <div className="flex items-center justify-between px-1">
-            <h2 className="text-xl font-bold text-text-hi tracking-tight">บันทึกของคุณ</h2>
-            <Link 
-              href="/notes" 
-              className="text-sm font-medium text-gold hover:text-gold-dim flex items-center gap-1 transition-colors"
+            <h3 className="text-sm font-semibold text-text-hi tracking-tight">บันทึกล่าสุด</h3>
+            <Link
+              href="/notes"
+              className="text-xs font-medium text-gold hover:text-gold-dim flex items-center gap-1 transition-colors active:scale-95"
             >
               ดูทั้งหมด
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-3.5 h-3.5" />
             </Link>
           </div>
-          
-          {/* Columns for Masonry effect */}
-          <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-4 space-y-4">
-            {notes.map((note) => (
-              <div key={note.id} className="break-inside-avoid">
-                <NoteCard 
-                  note={note} 
-                  onDelete={handleDelete} 
-                  onClick={() => setSelectedNote(note)}
-                />
-              </div>
+
+          <div className="masonry-grid">
+            {recentNotes.map((note) => (
+              <NoteCard
+                key={note.id}
+                note={note}
+                layout="masonry"
+                onDelete={handleDelete}
+                onPin={handlePin}
+                onClick={() => setSelectedNote(note)}
+              />
             ))}
           </div>
         </div>
       )}
 
+      {/* Note Detail */}
       <NoteDetailModal
         note={selectedNote}
         open={!!selectedNote}
         onClose={() => setSelectedNote(null)}
         onDelete={handleDelete}
+        onUpdate={handleUpdate}
       />
-
-      {/* Summary Modal - Samsung AI Style */}
-      <Modal 
-        open={summaryOpen} 
-        onClose={() => setSummaryOpen(false)}
-      >
-        <div className="relative p-1 sm:p-2">
-          {/* Removed Decorative Gradient */}
-
-          {/* Header */}
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-gold to-gold-dim flex items-center justify-center shadow-lg shadow-gold/20">
-              <Sparkles className="w-6 h-6 text-text-inv" />
-            </div>
-            <div>
-              <h2 className="text-2xl font-display font-bold text-text-hi tracking-tight">AI Insights</h2>
-              <p className="text-[10px] text-gold uppercase tracking-[0.2em] font-bold">Powered by JamDai Intelligence</p>
-            </div>
-          </div>
-          
-          <div className="relative min-h-[160px] flex flex-col justify-center">
-            {summaryLoading ? (
-              <div className="space-y-4">
-                <div className="h-4 bg-gold/5 rounded-full w-full animate-pulse" />
-                <div className="h-4 bg-gold/5 rounded-full w-[90%] animate-pulse [animation-delay:0.2s]" />
-                <div className="h-4 bg-gold/5 rounded-full w-[75%] animate-pulse [animation-delay:0.4s]" />
-              </div>
-            ) : (
-              <div className="animate-fade-in">
-                <p className="text-2xl md:text-3xl text-text-hi leading-[1.4] font-medium tracking-tight">
-                  {summary || "ยังไม่มีข้อมูลเพียงพอสำหรับการสรุปในขณะนี้ ลองจดบันทึกเพิ่มสิ!"}
-                </p>
-              </div>
-            )}
-          </div>
-          
-          <div className="mt-12 flex flex-col gap-6">
-            <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
-            
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <div className="space-y-2">
-                <p className="text-[10px] text-text-lo uppercase tracking-widest font-bold">คัดกรองจาก</p>
-                <div className="flex gap-1.5">
-                  {Array.from(new Set(notes.map(n => n.category))).slice(0, 3).map(cat => (
-                    <span key={cat} className="px-2.5 py-1 rounded-lg bg-gold/5 border border-gold/10 text-[10px] text-gold font-bold">
-                      {cat}
-                    </span>
-                  ))}
-                </div>
-              </div>
-              
-              <button 
-                onClick={() => setSummaryOpen(false)}
-                className="px-8 py-3.5 bg-text-hi text-text-inv rounded-2xl text-sm font-bold hover:opacity-90 transition-opacity active:scale-[0.98]"
-              >
-                รับทราบ
-              </button>
-            </div>
-          </div>
-        </div>
-      </Modal>
 
       <NoteModal
         open={sheetOpen}
@@ -217,4 +187,3 @@ export default function DashboardPage() {
     </>
   );
 }
-

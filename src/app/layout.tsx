@@ -23,7 +23,7 @@ const geistMono = Geist_Mono({
 });
 
 export const viewport = {
-  themeColor: "#111111",
+  themeColor: "#0D0D0D",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "จำได้",
+    title: "JamDai",
   },
 };
 

@@ -51,7 +51,7 @@ export function LockScreen({ onUnlock }: LockScreenProps) {
           <Lock className="w-8 h-8" />
         </div>
         
-        <h1 className="text-2xl font-display font-bold text-text-hi mb-2 tracking-tight">ใส่รหัสผ่าน</h1>
+        <h1 className="text-2xl font-display font-bold text-text-hi mb-2 tracking-tight italic">ใส่รหัสผ่าน</h1>
         <p className="text-sm text-text-lo mb-10">กรุณาใส่รหัส 4 หลักเพื่อเข้าใช้งาน</p>
 
         {/* PIN Indicators */}

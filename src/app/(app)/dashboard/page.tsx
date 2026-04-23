@@ -53,7 +53,7 @@ export default function DashboardPage() {
   return (
     <>
       {/* AI Summary Trigger - Overlays layout top bar on mobile */}
-      <div className="md:hidden fixed top-3 right-20 z-40">
+      <div className="md:hidden fixed top-3 right-32 z-40">
         <button
           onClick={() => setSummaryOpen(true)}
           disabled={summaryLoading && !summary}

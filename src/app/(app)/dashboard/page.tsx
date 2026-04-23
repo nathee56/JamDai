@@ -118,15 +118,27 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* Quick Add (Large Centered Button) */}
-      <div className="flex justify-center mb-12 mt-4">
-        <button
-          onClick={() => setSheetOpen(true)}
-          className="flex items-center justify-center w-24 h-24 md:w-28 md:h-28 bg-gold text-base hover:bg-gold/90 shadow-xl hover:shadow-2xl hover:shadow-gold/20 rounded-full transition-all duration-300 cursor-pointer active:scale-95"
-          aria-label="เพิ่มโน้ตใหม่"
-        >
-          <Plus className="w-10 h-10 md:w-12 md:h-12 text-text-inv" strokeWidth={2.5} />
-        </button>
+      {/* Quick Add (The Hero Button) */}
+      <div className="flex flex-col items-center justify-center mb-16 mt-6">
+        <div className="relative">
+          {/* Pulsing Outer Rings */}
+          <div className="absolute inset-0 rounded-full bg-gold/20 animate-ping opacity-20 scale-125" />
+          <div className="absolute inset-0 rounded-full bg-gold/10 animate-ping opacity-40 [animation-delay:0.5s] scale-150" />
+          
+          <button
+            onClick={() => setSheetOpen(true)}
+            className="relative flex items-center justify-center w-28 h-28 md:w-32 md:h-32 bg-gradient-to-br from-gold to-gold-dim text-base shadow-[0_0_40px_-5px_rgba(240,180,41,0.5)] hover:shadow-[0_0_60px_-5px_rgba(240,180,41,0.6)] rounded-full transition-all duration-500 cursor-pointer active:scale-90 group overflow-hidden"
+            aria-label="เพิ่มโน้ตใหม่"
+          >
+            {/* Glossy Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-white/20 opacity-50" />
+            <Plus className="w-12 h-12 md:w-16 md:h-16 text-text-inv relative z-10 transition-transform duration-500 group-hover:rotate-90 group-hover:scale-110" strokeWidth={3} />
+          </button>
+        </div>
+        
+        <span className="mt-4 font-display font-bold text-xs text-gold uppercase tracking-[0.3em] opacity-80 animate-pulse">
+          จดบันทึกใหม่
+        </span>
       </div>
 
       {/* Recent Notes */}

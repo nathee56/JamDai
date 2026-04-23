@@ -7,7 +7,7 @@ import { summarizeNotes } from "@/lib/thaillm";
 import { NoteCard } from "@/components/notes/NoteCard";
 import { NoteModal } from "@/components/notes/NoteModal";
 import { Plus, FileText } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import type { NoteCategory } from "@/types";
 

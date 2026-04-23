@@ -166,39 +166,46 @@ body {
 
 /* ── Liquid Glass (iOS 26 Style) ── */
 :root.liquid {
-  --liquid-blur: 64px;
-  --liquid-opacity: 0.25;
-  --liquid-border: rgba(255, 255, 255, 0.25);
-  --liquid-glow: rgba(240, 180, 41, 0.15);
+  --liquid-blur: 80px;
+  --liquid-opacity: 0.22;
+  --liquid-border: rgba(255, 255, 255, 0.3);
+  --liquid-glow: rgba(240, 180, 41, 0.2);
 }
 
-.liquid .bg-surface {
-  background-color: rgba(15, 15, 15, var(--liquid-opacity));
-  backdrop-filter: blur(var(--liquid-blur)) saturate(210%);
-  border: 1.5px solid var(--liquid-border);
-  box-shadow: 
-    0 8px 32px 0 rgba(0, 0, 0, 0.37),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.05);
-}
-
+.liquid .bg-surface,
 .liquid .bg-elevated {
-  background-color: rgba(25, 25, 25, var(--liquid-opacity));
-  backdrop-filter: blur(var(--liquid-blur)) saturate(210%);
-  border: 1.5px solid var(--liquid-border);
+  background-color: rgba(10, 10, 10, var(--liquid-opacity));
+  backdrop-filter: blur(var(--liquid-blur)) saturate(220%);
+  border: 1px solid var(--liquid-border);
   box-shadow: 
-    0 12px 40px 0 rgba(0, 0, 0, 0.45),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+    0 20px 50px rgba(0, 0, 0, 0.4),
+    inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Glass Noise Texture */
+.liquid .bg-surface::before,
+.liquid .bg-elevated::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.03;
+  pointer-events: none;
+  mix-blend-mode: overlay;
 }
 
 .liquid .bg-base {
   background-color: #000;
-  background-image: none;
+  background-image: 
+    radial-gradient(circle at 50% -20%, #1a1a1a 0%, #000 100%);
 }
 
 /* Liquid Mesh Gradient Components */
 .liquid-blob {
-  filter: blur(80px);
-  opacity: 0.6;
+  filter: blur(100px);
+  opacity: 0.7;
   mix-blend-mode: screen;
 }
 

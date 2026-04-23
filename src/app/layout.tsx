@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { IBM_Plex_Sans_Thai, Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/ui/ThemeProvider";
 import { AuthProvider } from "@/hooks/useAuth";
+import { UIProvider } from "@/components/providers/UIProvider";
 import { Toaster } from "react-hot-toast";
 import "./globals.css";
 
@@ -59,23 +60,25 @@ export default function RootLayout({
     >
       <body className="min-h-dvh bg-base text-text-hi antialiased">
         <ThemeProvider>
-          <AuthProvider>
-            {children}
-            <Toaster
-              position="bottom-center"
-              toastOptions={{
-                duration: 3000,
-                style: {
-                  background: "var(--color-elevated)",
-                  color: "var(--color-text-hi)",
-                  border: "1px solid var(--color-border)",
-                  borderRadius: "var(--radius-md)",
-                  fontFamily: "var(--font-sans)",
-                  fontSize: "14px",
-                },
-              }}
-            />
-          </AuthProvider>
+          <UIProvider>
+            <AuthProvider>
+              {children}
+              <Toaster
+                position="bottom-center"
+                toastOptions={{
+                  duration: 3000,
+                  style: {
+                    background: "var(--color-elevated)",
+                    color: "var(--color-text-hi)",
+                    border: "1px solid var(--color-border)",
+                    borderRadius: "var(--radius-md)",
+                    fontFamily: "var(--font-sans)",
+                    fontSize: "14px",
+                  },
+                }}
+              />
+            </AuthProvider>
+          </UIProvider>
         </ThemeProvider>
       </body>
     </html>

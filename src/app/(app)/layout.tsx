@@ -60,8 +60,14 @@ export default function AppLayout({ children }: { children: ReactNode }) {
   const initial = (user.displayName || user.email || "?").charAt(0).toUpperCase();
 
   return (
-    <div className="h-dvh bg-base flex overflow-hidden">
+    <div className="h-dvh bg-base flex overflow-hidden relative">
       {isLocked && <LockScreen onUnlock={() => setIsLocked(false)} />}
+
+      {/* ── Liquid Background Decor ── */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden liquid-only opacity-0 transition-opacity duration-1000">
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-gold/10 blur-[120px] animate-liquid" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-gold/5 blur-[120px] animate-liquid [animation-delay:-5s]" />
+      </div>
 
       {/* ── Desktop Sidebar ── */}
       <aside className="hidden md:flex w-72 h-dvh fixed top-0 left-0 flex-col bg-surface border-r border-border p-8 z-30">

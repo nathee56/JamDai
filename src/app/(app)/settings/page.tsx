@@ -2,6 +2,7 @@
 
 import { useAuth } from "@/hooks/useAuth";
 import { useTheme } from "next-themes";
+import { useUI } from "@/components/providers/UIProvider";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import {
@@ -25,6 +26,7 @@ import toast from "react-hot-toast";
 export default function SettingsPage() {
   const { user, signOut, updateUserProfile } = useAuth();
   const { theme, setTheme } = useTheme();
+  const { uiStyle, setUIStyle } = useUI();
   const [mounted, setMounted] = useState(false);
   
   // Profile states
@@ -142,34 +144,68 @@ export default function SettingsPage() {
         </div>
       </section>
 
-      {/* Theme */}
+      {/* Theme & Style */}
       <section className="space-y-3">
         <p className="text-xs font-semibold text-text-lo tracking-widest uppercase px-1">การแสดงผล</p>
         <div className="bg-surface border border-border rounded-2xl overflow-hidden divide-y divide-border">
-          <button
-            onClick={() => setTheme("dark")}
-            className="w-full flex items-center justify-between px-5 py-4 hover:bg-border/30 transition-colors duration-150 cursor-pointer"
-          >
-            <div className="flex items-center gap-3">
-              <Moon className="w-5 h-5 text-text-md" />
-              <span className="text-base text-text-hi font-medium">Dark Mode</span>
+          {/* Theme Mode */}
+          <div className="p-4 bg-base/50">
+            <p className="text-[10px] text-text-lo uppercase tracking-widest font-bold mb-3 px-1">โหมดสี</p>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={() => setTheme("dark")}
+                className={cn(
+                  "flex items-center justify-center gap-2 py-3 rounded-xl border transition-all duration-200",
+                  theme === "dark" ? "bg-gold border-gold text-text-inv" : "bg-surface border-border text-text-lo"
+                )}
+              >
+                <Moon className="w-4 h-4" />
+                <span className="text-sm font-bold">มืด</span>
+              </button>
+              <button
+                onClick={() => setTheme("light")}
+                className={cn(
+                  "flex items-center justify-center gap-2 py-3 rounded-xl border transition-all duration-200",
+                  theme === "light" ? "bg-gold border-gold text-text-inv" : "bg-surface border-border text-text-lo"
+                )}
+              >
+                <Sun className="w-4 h-4" />
+                <span className="text-sm font-bold">สว่าง</span>
+              </button>
             </div>
-            {mounted && (
-              <div className={`w-5 h-5 rounded-full border-2 transition-colors ${theme === "dark" ? "bg-gold border-gold" : "border-border"}`} />
-            )}
-          </button>
-          <button
-            onClick={() => setTheme("light")}
-            className="w-full flex items-center justify-between px-5 py-4 hover:bg-border/30 transition-colors duration-150 cursor-pointer"
-          >
-            <div className="flex items-center gap-3">
-              <Sun className="w-5 h-5 text-text-md" />
-              <span className="text-base text-text-hi font-medium">Light Mode</span>
+          </div>
+
+          {/* UI Style */}
+          <div className="p-4">
+            <p className="text-[10px] text-text-lo uppercase tracking-widest font-bold mb-3 px-1">สไตล์อินเทอร์เฟซ</p>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={() => setUIStyle("minimal")}
+                className={cn(
+                  "flex flex-col items-center justify-center gap-1 py-4 rounded-xl border transition-all duration-300",
+                  uiStyle === "minimal" ? "bg-gold/10 border-gold text-gold" : "bg-surface border-border text-text-lo"
+                )}
+              >
+                <span className="text-sm font-bold">Minimal</span>
+                <span className="text-[9px] uppercase tracking-tighter opacity-60">เรียบง่าย สบายตา</span>
+              </button>
+              <button
+                onClick={() => setUIStyle("liquid")}
+                className={cn(
+                  "relative flex flex-col items-center justify-center gap-1 py-4 rounded-xl border transition-all duration-500 overflow-hidden group",
+                  uiStyle === "liquid" 
+                    ? "bg-gold/20 border-gold text-gold shadow-[0_0_20px_-5px_rgba(240,180,41,0.3)]" 
+                    : "bg-surface border-border text-text-lo"
+                )}
+              >
+                {uiStyle === "liquid" && (
+                  <div className="absolute inset-0 bg-gradient-to-br from-gold/10 via-transparent to-transparent animate-pulse" />
+                )}
+                <span className="relative z-10 text-sm font-bold">Liquid Glass</span>
+                <span className="relative z-10 text-[9px] uppercase tracking-tighter opacity-60">หรูหรา ลื่นไหล</span>
+              </button>
             </div>
-            {mounted && (
-              <div className={`w-5 h-5 rounded-full border-2 transition-colors ${theme === "light" ? "bg-gold border-gold" : "border-border"}`} />
-            )}
-          </button>
+          </div>
         </div>
       </section>
 

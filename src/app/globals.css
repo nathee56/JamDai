@@ -164,49 +164,32 @@ body {
   border-radius: var(--radius-md);
 }
 
-/* ── Liquid Glass (iOS 26 Style) ── */
+/* ── Liquid Glass (iOS 26 Style) ── Solid Glass Refinement ── */
 :root.liquid {
-  --liquid-blur: 80px;
-  --liquid-opacity: 0.22;
-  --liquid-border: rgba(255, 255, 255, 0.3);
-  --liquid-glow: rgba(240, 180, 41, 0.2);
+  --liquid-blur: 24px;
+  --liquid-opacity: 0.95;
+  --liquid-border: var(--color-border);
+  --liquid-glow: transparent;
 }
 
 .liquid .bg-surface,
 .liquid .bg-elevated {
-  background-color: rgba(10, 10, 10, var(--liquid-opacity));
-  backdrop-filter: blur(var(--liquid-blur)) saturate(220%);
+  background-color: var(--color-surface);
+  backdrop-filter: blur(var(--liquid-blur));
   border: 1px solid var(--liquid-border);
-  box-shadow: 
-    0 20px 50px rgba(0, 0, 0, 0.4),
-    inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   position: relative;
   overflow: hidden;
 }
 
-/* Glass Noise Texture */
-.liquid .bg-surface::before,
-.liquid .bg-elevated::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  opacity: 0.03;
-  pointer-events: none;
-  mix-blend-mode: overlay;
-}
-
 .liquid .bg-base {
-  background-color: #000;
-  background-image: 
-    radial-gradient(circle at 50% -20%, #1a1a1a 0%, #000 100%);
+  background-color: var(--color-base);
+  background-image: none;
 }
 
-/* Liquid Mesh Gradient Components */
+/* Liquid Mesh Gradient Components - Removed extreme colors */
 .liquid-blob {
-  filter: blur(100px);
-  opacity: 0.7;
-  mix-blend-mode: screen;
+  display: none;
 }
 
 /* Fluid Animations */

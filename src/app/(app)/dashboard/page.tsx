@@ -52,20 +52,19 @@ export default function DashboardPage() {
 
   return (
     <>
-      {/* AI Summary Floating Button - High Visibility */}
-      <div className="fixed right-6 bottom-32 z-40 md:hidden">
+      {/* AI Summary Trigger - Back to Top Bar */}
+      <div className="md:hidden fixed top-3 right-32 z-40">
         <button
           onClick={() => setSummaryOpen(true)}
           disabled={summaryLoading && !summary}
           className={cn(
-            "w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500 shadow-2xl group active:scale-95",
+            "w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300",
             summaryLoading && !summary
               ? "bg-border text-text-lo"
-              : "bg-gold text-text-inv hover:scale-110 shadow-gold/20"
+              : "bg-gold/10 text-gold hover:bg-gold/20 shadow-lg shadow-gold/5"
           )}
         >
-          <div className="absolute inset-0 rounded-2xl bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity" />
-          <Sparkles className={cn("w-7 h-7", summaryLoading ? "animate-pulse" : "")} />
+          <Sparkles className={cn("w-5 h-5", summaryLoading ? "animate-pulse" : "")} />
         </button>
       </div>
 

@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { cn } from "@/lib/utils";
 import { LockScreen } from "@/components/ui/LockScreen";
+import { useUI } from "@/components/providers/UIProvider";
 import {
   Home,
   FileText,
@@ -27,6 +28,7 @@ const navItems = [
 
 export default function AppLayout({ children }: { children: ReactNode }) {
   const { user, loading, signOut } = useAuth();
+  const { uiStyle } = useUI();
   const router = useRouter();
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
@@ -72,7 +74,10 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       </div>
 
       {/* ── Desktop Sidebar ── */}
-      <aside className="hidden md:flex w-72 h-dvh fixed top-0 left-0 flex-col bg-surface border-r border-border p-8 z-30">
+      <aside className={cn(
+        "hidden md:flex w-72 h-dvh fixed top-0 left-0 flex-col border-r border-border p-8 z-30 transition-all duration-500",
+        uiStyle === "liquid" ? "bg-surface" : "bg-surface"
+      )}>
         <div className="mb-10">
           <span className="font-display font-bold text-3xl text-gold tracking-tight">จำได้</span>
           <span className="block font-mono text-xs text-text-lo tracking-wider uppercase mt-1">JamDai</span>
@@ -123,7 +128,10 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       </aside>
 
       {/* ── Mobile Top Bar ── */}
-      <header className="md:hidden fixed top-0 left-0 right-0 h-16 flex items-center justify-between px-6 bg-base/80 backdrop-blur-2xl z-30 shrink-0">
+      <header className={cn(
+        "md:hidden fixed top-0 left-0 right-0 h-16 flex items-center justify-between px-6 z-30 shrink-0 transition-all duration-500",
+        uiStyle === "liquid" ? "bg-surface" : "bg-base/80 backdrop-blur-2xl border-b border-border/50"
+      )}>
         <span className="font-display font-bold text-2xl text-text-hi tracking-tight">จำได้.</span>
         <div className="flex items-center gap-3">
           <ThemeToggle />
@@ -134,7 +142,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       </header>
 
       {/* ── Main Content ── */}
-      <main className="flex-1 md:ml-72 flex flex-col overflow-hidden">
+      <main className="flex-1 md:ml-72 flex flex-col overflow-hidden relative z-10">
         {/* Mobile top spacer */}
         <div className="md:hidden h-16 shrink-0" />
 
@@ -149,15 +157,22 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       </main>
 
       {/* ── Mobile Bottom Navigation ── */}
-      {/* Background Blur Overlay for scrolling content */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-base via-base/80 to-transparent backdrop-blur-md pointer-events-none z-30" />
+      {/* Background Blur Overlay for scrolling content - Hide in Liquid mode */}
+      {uiStyle !== "liquid" && (
+        <div className="md:hidden fixed bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-base via-base/80 to-transparent backdrop-blur-md pointer-events-none z-30" />
+      )}
       
       {/* fixed position is NOT affected by keyboard resize */}
       <div
         className="md:hidden fixed left-0 right-0 z-40 px-6 flex justify-center"
         style={{ bottom: "max(24px, env(safe-area-inset-bottom))" }}
       >
-        <nav className="flex items-center justify-around bg-elevated/80 backdrop-blur-3xl border border-border/60 shadow-2xl rounded-full px-2 py-2 w-full max-w-[400px]">
+        <nav className={cn(
+          "flex items-center justify-around shadow-2xl rounded-full px-2 py-2 w-full max-w-[400px] transition-all duration-500",
+          uiStyle === "liquid" 
+            ? "bg-elevated" 
+            : "bg-elevated/80 backdrop-blur-3xl border border-border/60"
+        )}>
           {navItems.map((item) => {
             const active = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
             return (
@@ -177,7 +192,6 @@ export default function AppLayout({ children }: { children: ReactNode }) {
           })}
         </nav>
       </div>
-
     </div>
   );
 }

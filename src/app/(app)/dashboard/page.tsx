@@ -2,7 +2,8 @@
 
 import { useAuth } from "@/hooks/useAuth";
 import { useNotes } from "@/hooks/useNotes";
-import { getGreeting, formatThaiDate } from "@/lib/utils";
+import { getGreeting, formatThaiDate, cn } from "@/lib/utils";
+import { summarizeNotes } from "@/lib/thaillm";
 import { NoteCard } from "@/components/notes/NoteCard";
 import { NoteModal } from "@/components/notes/NoteModal";
 import { Plus, FileText } from "lucide-react";
@@ -14,6 +15,25 @@ export default function DashboardPage() {
   const { user } = useAuth();
   const { notes, loading, addNote, deleteNote } = useNotes(user?.uid);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [summary, setSummary] = useState("");
+  const [summaryLoading, setSummaryLoading] = useState(false);
+
+  useEffect(() => {
+    if (!loading && notes.length > 0 && !summary) {
+      const fetchSummary = async () => {
+        setSummaryLoading(true);
+        try {
+          const s = await summarizeNotes(notes);
+          setSummary(s);
+        } catch (error) {
+          console.error("Summary failed", error);
+        } finally {
+          setSummaryLoading(false);
+        }
+      };
+      fetchSummary();
+    }
+  }, [notes, loading, summary]);
 
   const handleSave = async (text: string, category: NoteCategory) => {
     await addNote(text, category);
@@ -41,11 +61,40 @@ export default function DashboardPage() {
           {user?.displayName?.split(" ")[0] || "คุณ"}
         </span>
       </h1>
-      <p className="text-base text-text-md mb-10">
+      <p className="text-base text-text-md mb-8">
         {notes.length > 0
           ? `${notes.length} รายการที่บันทึกไว้`
           : "เริ่มบันทึกความทรงจำแรกของคุณ"}
       </p>
+
+      {/* AI Summary Widget */}
+      {(summaryLoading || summary) && (
+        <div className="mb-10 animate-fade-in">
+          <div className="bg-gold-glow border border-gold/20 rounded-3xl p-6 relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-4 opacity-10">
+              <Plus className="w-20 h-20 rotate-45" />
+            </div>
+            <div className="relative z-10">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-2 h-2 rounded-full bg-gold animate-pulse" />
+                <span className="font-mono text-[10px] text-gold uppercase tracking-[0.2em] font-bold">
+                  AI สรุปภาพรวม
+                </span>
+              </div>
+              {summaryLoading ? (
+                <div className="space-y-2">
+                  <div className="h-4 bg-gold/10 rounded-full w-3/4 animate-pulse" />
+                  <div className="h-4 bg-gold/10 rounded-full w-1/2 animate-pulse" />
+                </div>
+              ) : (
+                <p className="text-lg text-text-hi leading-relaxed font-medium">
+                  {summary}
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Quick Add (Large Centered Button) */}
       <div className="flex justify-center mb-12 mt-4">

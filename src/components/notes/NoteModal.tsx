@@ -6,7 +6,9 @@ import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import { Bot, Pencil, Camera, Mic, MicOff, Loader2 } from "lucide-react";
 import type { NoteCategory } from "@/types";
-import { categorizeNote } from "@/lib/thaillm";
+import { categorizeNote, detectReminders } from "@/lib/thaillm";
+import { useEffect, useRef } from "react";
+import toast from "react-hot-toast";
 
 interface NoteModalProps {
   open: boolean;
@@ -21,6 +23,20 @@ export function NoteModal({ open, onClose, onSave }: NoteModalProps) {
   const [text, setText] = useState("");
   const [saving, setSaving] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
+  const [reminder, setReminder] = useState<{ date?: string; time?: string; suggestion: string } | null>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    if (text.trim().length > 10) {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      timeoutRef.current = setTimeout(async () => {
+        const result = await detectReminders(text);
+        setReminder(result);
+      }, 1500);
+    } else {
+      setReminder(null);
+    }
+  }, [text]);
   const [isListening, setIsListening] = useState(false);
   const [recognition, setRecognition] = useState<any>(null);
 
@@ -148,6 +164,29 @@ export function NoteModal({ open, onClose, onSave }: NoteModalProps) {
 
       {/* AI Indicator & Save */}
       <div className="flex flex-col gap-4">
+        {reminder && (
+          <div className="bg-gold/10 border border-gold/20 rounded-2xl p-4 flex items-center justify-between animate-in slide-in-from-bottom-2 duration-300">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-gold/20 flex items-center justify-center text-gold">
+                <Bell className="w-5 h-5" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-bold text-gold uppercase tracking-wider">ตรวจพบการนัดหมาย</p>
+                <p className="text-sm text-text-hi truncate">{reminder.suggestion}</p>
+              </div>
+            </div>
+            <button 
+              onClick={() => {
+                toast.success("ตั้งแจ้งเตือนแล้ว (จำลอง)");
+                setReminder(null);
+              }}
+              className="px-4 py-2 bg-gold text-text-inv text-xs font-bold rounded-xl hover:bg-gold-dim transition-colors"
+            >
+              ตั้งเตือน
+            </button>
+          </div>
+        )}
+
         {analyzing && (
           <div className="flex items-center justify-center gap-2 text-gold animate-pulse text-sm">
             <Bot className="w-4 h-4" />

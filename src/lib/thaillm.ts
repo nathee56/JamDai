@@ -108,3 +108,61 @@ export async function categorizeNote(text: string): Promise<NoteCategory> {
     return "อื่นๆ";
   }
 }
+export async function summarizeNotes(notes: Note[]): Promise<string> {
+  if (notes.length === 0) return "";
+
+  const recentNotes = notes.slice(0, 5).map(n => `- (${n.category}) ${n.text}`).join("\n");
+  
+  try {
+    const messages = [
+      {
+        role: "system",
+        content: `คุณคือผู้ช่วยสรุปบันทึกส่วนตัว หน้าที่ของคุณคือสรุปโน้ตล่าสุดของผู้ใช้ให้สั้น กระชับ และน่าสนใจ
+        
+กฎ:
+- สรุปเป็นภาษาไทย 1-2 ประโยคเท่านั้น
+- เน้นภาพรวมว่าช่วงนี้ผู้ใช้ทำอะไรหรือกังวลเรื่องอะไร
+- ห้ามตอบว่า "ไม่มีโน้ต" เพราะระบบจะส่งโน้ตมาให้เสมอ`
+      },
+      { role: "user", content: `โน้ตล่าสุด:\n${recentNotes}` }
+    ];
+
+    return await callAI(messages, 0.5, 150);
+  } catch {
+    return "ช่วงนี้คุณมีการบันทึกเรื่อง " + notes[0].category + " เป็นส่วนใหญ่";
+  }
+}
+
+export async function detectReminders(text: string): Promise<{ date?: string; time?: string; suggestion: string } | null> {
+  try {
+    const messages = [
+      {
+        role: "system",
+        content: `คุณคือ AI ตรวจจับวันเวลาในข้อความภาษาไทย
+        
+หน้าที่: ถ้าพบการอ้างถึงวันหรือเวลาในข้อความ ให้ดึงข้อมูลออกมาในรูปแบบ JSON
+ถ้าไม่พบวันเวลาที่ชัดเจน ให้ตอบว่า "null"
+
+ตัวอย่างคำตอบ:
+{"date": "2024-04-24", "time": "10:00", "suggestion": "นัดหมอพรุ่งนี้ 10 โมง"}
+
+กฎ:
+- วันที่ต้องเป็นรูปแบบ YYYY-MM-DD
+- เวลาต้องเป็นรูปแบบ HH:mm
+- ตอบแค่ JSON หรือคำว่า null เท่านั้น ห้ามมีคำอธิบายอื่น`
+      },
+      { role: "user", content: `ข้อความ: ${text}\n(วันนี้คือวันที่: ${new Date().toISOString().split('T')[0]})` }
+    ];
+
+    const result = await callAI(messages, 0.1, 100);
+    if (result.toLowerCase().includes("null")) return null;
+    
+    try {
+      return JSON.parse(result);
+    } catch {
+      return null;
+    }
+  } catch {
+    return null;
+  }
+}

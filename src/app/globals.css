@@ -1,26 +1,151 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
+/* ── Obsidian Gold — Design Tokens for Tailwind v4 ── */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* ── Fonts ── */
+  --font-display: var(--font-display), sans-serif;
+  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  /* ── Colors — Dark (default) ── */
+  --color-void: #050505;
+  --color-base: #0A0A0A;
+  --color-surface: #121212;
+  --color-elevated: #1A1A1A;
+  --color-border: #222222;
+  --color-border-hi: #333333;
+
+  --color-gold: #F0B429;
+  --color-gold-dim: #C8962A;
+  --color-gold-mist: rgba(240, 180, 41, 0.08);
+  --color-gold-glow: rgba(240, 180, 41, 0.12);
+
+  --color-text-hi: #F5F5F5;
+  --color-text-md: #A0A0A0;
+  --color-text-lo: #666666;
+  --color-text-inv: #0D0D0D;
+
+  /* ── Spacing (4px grid) ── */
+  --spacing-0_5: 2px;
+  --spacing-1: 4px;
+  --spacing-1_5: 6px;
+  --spacing-2: 8px;
+  --spacing-2_5: 10px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --spacing-10: 40px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+
+  /* ── Border Radius ── */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-2xl: 28px;
+
+  /* ── Letter Spacing ── */
+  --tracking-tighter: -0.03em;
+  --tracking-tight: -0.01em;
+  --tracking-wide: 0.08em;
+  --tracking-wider: 0.12em;
+
+  /* ── Transitions ── */
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* ── Animations ── */
+  --animate-shimmer: shimmer 2s infinite linear;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-pulse-dot: pulse-dot 2s ease-in-out infinite;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ── Keyframes ── */
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(1.8); }
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes msg-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Base Styles ── */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  background-color: var(--color-base);
+  color: var(--color-text-hi);
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+::selection {
+  background: var(--color-gold);
+  color: var(--color-text-inv);
+}
+
+/* ── Light Mode Overrides ── */
+.light {
+  --color-void: #F9FAFB;
+  --color-base: #FFFFFF;
+  --color-surface: #F3F4F6;
+  --color-elevated: #E5E7EB;
+  --color-border: #E5E7EB;
+  --color-border-hi: #D1D5DB;
+  --color-gold: #D97706;
+  --color-gold-dim: #B45309;
+  --color-gold-mist: rgba(217, 119, 6, 0.08);
+  --color-gold-glow: rgba(217, 119, 6, 0.12);
+  --color-text-hi: #111827;
+  --color-text-md: #4B5563;
+  --color-text-lo: #9CA3AF;
+  --color-text-inv: #FFFFFF;
+}
+
+/* ── Utility: hide scrollbar ── */
+.hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Skeleton ── */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-surface) 25%,
+    var(--color-elevated) 50%,
+    var(--color-surface) 75%
+  );
+  background-size: 200% 100%;
+  animation: var(--animate-shimmer);
+  border-radius: var(--radius-md);
 }

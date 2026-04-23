@@ -5,6 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { cn } from "@/lib/utils";
+import { LockScreen } from "@/components/ui/LockScreen";
 import {
   Home,
   FileText,
@@ -29,8 +30,15 @@ export default function AppLayout({ children }: { children: ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
+  const [isLocked, setIsLocked] = useState(false);
 
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    setMounted(true);
+    const hasPin = !!localStorage.getItem("jamdai_pin");
+    if (hasPin) {
+      setIsLocked(true);
+    }
+  }, []);
 
   useEffect(() => {
     if (!loading && !user) router.push("/auth");
@@ -53,6 +61,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
 
   return (
     <div className="h-dvh bg-base flex overflow-hidden">
+      {isLocked && <LockScreen onUnlock={() => setIsLocked(false)} />}
 
       {/* ── Desktop Sidebar ── */}
       <aside className="hidden md:flex w-72 h-dvh fixed top-0 left-0 flex-col bg-surface border-r border-border p-8 z-30">

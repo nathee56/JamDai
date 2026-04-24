@@ -26,5 +26,24 @@
       "type": "image/png",
       "purpose": "maskable"
     }
+  ],
+  "id": "/?source=pwa",
+  "shortcuts": [
+    {
+      "name": "บันทึกใหม่",
+      "short_name": "ใหม่",
+      "description": "สร้างบันทึกใหม่ทันที",
+      "url": "/dashboard?action=new",
+      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "JamDai Dashboard"
+    }
   ]
 }

@@ -31,11 +31,13 @@ export function Modal({ open, onClose, title, children, fullScreen = false }: Mo
           {/* Modal */}
           <div 
             className={cn(
-              "fixed z-[70] flex items-center justify-center pointer-events-none transition-all duration-300",
-              fullScreen 
-                ? "inset-0 md:inset-0 p-0 md:p-4 top-[var(--header-top-height)] md:top-0 bottom-[var(--nav-bottom-height)] md:bottom-0" 
-                : "inset-0 p-2 sm:p-4"
+              "fixed z-[100] flex items-center justify-center pointer-events-none transition-all duration-300",
+              fullScreen ? "inset-0 md:inset-0 p-0 md:p-4" : "inset-0 p-2 sm:p-4"
             )}
+            style={fullScreen ? { 
+              top: 'var(--header-top-height)', 
+              bottom: 'var(--nav-bottom-height)' 
+            } : {}}
           >
             <motion.div
               initial={fullScreen ? { y: "20%", opacity: 0 } : { scale: 0.95, opacity: 0, y: 10 }}

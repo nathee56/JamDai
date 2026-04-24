@@ -124,7 +124,11 @@ export function NoteDetailModal({ note, open, onClose, onDelete, onUpdate }: Not
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: "20%", opacity: 0 }}
             transition={{ type: "spring", damping: 30, stiffness: 300, mass: 0.8 }}
-            className="fixed z-[70] flex items-center justify-center pointer-events-none transition-all duration-300 inset-0 md:p-4 top-[var(--header-top-height)] md:top-0 bottom-[var(--nav-bottom-height)] md:bottom-0"
+            className="fixed z-[100] flex items-center justify-center pointer-events-none transition-all duration-300 inset-0 md:p-4"
+            style={{ 
+              top: 'var(--header-top-height)', 
+              bottom: 'var(--nav-bottom-height)' 
+            }}
           >
             <div 
               className="pointer-events-auto w-full h-full md:h-auto md:max-h-[90vh] md:max-w-[600px] bg-elevated md:rounded-2xl flex flex-col overflow-hidden transition-all duration-300 shadow-2xl border border-border/10 md:border-border/40"

@@ -50,7 +50,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
     return (
       <div className="min-h-[100dvh] bg-void flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
-          <span className="font-display font-bold text-3xl text-gold italic">จำได้</span>
+          <img src="/logo.png" alt="JamDai Logo" className="w-20 h-20 object-contain animate-pulse drop-shadow-[0_0_15px_rgba(240,180,41,0.2)]" />
           <div className="w-6 h-6 border-2 border-gold/30 border-t-gold rounded-full animate-spin" />
         </div>
       </div>
@@ -68,9 +68,14 @@ export default function AppLayout({ children }: { children: ReactNode }) {
 
       {/* ── Desktop Sidebar ── */}
       <aside className="hidden md:flex w-72 h-[100dvh] fixed top-0 left-0 flex-col border-r border-border p-8 z-30 bg-surface">
-        <div className="mb-10 flex items-start gap-2">
-          <span className="font-display font-bold text-3xl text-gold tracking-tight italic">JamDai</span>
-          <span className="px-1.5 py-0.5 mt-1.5 rounded-md bg-gold/10 text-[10px] font-mono text-gold uppercase tracking-widest border border-gold/20">Beta</span>
+        <div className="mb-10 flex items-center gap-3">
+          <img src="/logo.png" alt="JamDai" className="w-10 h-10 object-contain" />
+          <div className="flex flex-col">
+            <div className="flex items-center gap-2">
+              <span className="font-display font-bold text-2xl text-gold tracking-tight italic leading-none">JamDai</span>
+              <span className="px-1.5 py-0.5 rounded-md bg-gold/10 text-[9px] font-mono text-gold uppercase tracking-widest border border-gold/20">Beta</span>
+            </div>
+          </div>
         </div>
 
         <nav className="flex-1 space-y-1">
@@ -126,9 +131,10 @@ export default function AppLayout({ children }: { children: ReactNode }) {
         className="md:hidden fixed top-0 left-0 right-0 flex items-center justify-between px-5 z-40 shrink-0 bg-base/80 backdrop-blur-2xl border-b border-white/[0.06] safe-top"
         style={{ height: "calc(56px + env(safe-area-inset-top, 0px))" }}
       >
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-2">
+          <img src="/logo.png" alt="JamDai" className="w-7 h-7 object-contain" />
           <span className="font-display font-bold text-xl text-text-hi tracking-tight italic">JamDai</span>
-          <span className="px-1.5 py-0.5 rounded-md bg-gold/10 text-[9px] font-mono text-gold uppercase tracking-widest border border-gold/20">Beta</span>
+          <span className="px-1.5 py-0.5 rounded-md bg-gold/10 text-[8px] font-mono text-gold uppercase tracking-widest border border-gold/20">Beta</span>
         </div>
         <div className="flex items-center gap-2">
           <ThemeToggle />

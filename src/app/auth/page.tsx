@@ -54,7 +54,10 @@ export default function AuthPage() {
         className="relative z-10 w-full max-w-[360px] bg-surface border border-border rounded-xl px-8 py-10 text-center"
       >
         {/* Logo */}
-        <h1 className="font-display font-bold text-5xl text-gold mb-2">จำได้</h1>
+        <div className="flex justify-center mb-4">
+          <img src="/logo.png" alt="JamDai Logo" className="w-24 h-24 object-contain drop-shadow-[0_0_20px_rgba(240,180,41,0.2)]" />
+        </div>
+        <h1 className="font-display font-bold text-3xl text-gold mb-1 tracking-tight">JamDai <span className="text-base text-gold/70">Beta</span></h1>
         <p className="font-mono text-[10px] text-text-lo uppercase tracking-wider mb-6">
           ผู้ช่วยความจำ AI ส่วนตัว
         </p>

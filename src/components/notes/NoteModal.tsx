@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Modal } from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
-import { Bot, Pencil, Camera, Mic, MicOff, Loader2, Bell } from "lucide-react";
+import { Bot, Pencil, Camera, Mic, MicOff, Loader2, Bell, X } from "lucide-react";
 import type { NoteCategory } from "@/types";
 import { categorizeNote, detectReminders } from "@/lib/thaillm";
 import { useEffect, useRef } from "react";
@@ -109,8 +109,20 @@ export function NoteModal({ open, onClose, onSave }: NoteModalProps) {
   };
 
   return (
-    <Modal open={open} onClose={handleClose}>
-      {/* Mode tabs */}
+    <Modal open={open} onClose={handleClose} fullScreen={true}>
+      {/* Header with Close button */}
+      <div className="flex items-center justify-between mb-6 shrink-0">
+        <h3 className="font-display font-bold text-xl text-text-hi">สร้างบันทึกใหม่</h3>
+        <button
+          onClick={handleClose}
+          className="w-10 h-10 flex items-center justify-center rounded-full bg-surface text-text-lo hover:text-text-md active:scale-90 transition-all"
+        >
+          <X className="w-5 h-5" />
+        </button>
+      </div>
+
+      <div className="flex-1 overflow-y-auto hide-scrollbar">
+        {/* Mode tabs */}
       <div className="flex gap-4 mb-6">
         {[
           { mode: "text" as Mode, icon: Pencil, label: "พิมพ์ข้อความ" },
@@ -162,8 +174,10 @@ export function NoteModal({ open, onClose, onSave }: NoteModalProps) {
         </button>
       </div>
 
+      </div>
+
       {/* AI Indicator & Save */}
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 pt-4 shrink-0 border-t border-border/10">
         {reminder && (
           <div className="bg-gold/10 border border-gold/20 rounded-2xl p-4 flex items-center justify-between animate-in slide-in-from-bottom-2 duration-300">
             <div className="flex items-center gap-3">

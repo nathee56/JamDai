@@ -67,7 +67,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       <Onboarding />
 
       {/* ── Desktop Sidebar ── */}
-      <aside className="hidden md:flex w-72 h-[100dvh] fixed top-0 left-0 flex-col border-r border-border p-8 z-30 bg-surface">
+      <aside className="hidden md:flex w-[260px] h-[100dvh] fixed top-0 left-0 flex-col border-r border-border p-8 z-30 bg-surface">
         <div className="mb-10 flex items-center gap-3">
           <img src="/logo.png" alt="JamDai" className="w-10 h-10 object-contain" />
           <div className="flex flex-col">
@@ -121,7 +121,6 @@ export default function AppLayout({ children }: { children: ReactNode }) {
               <LogOut className="w-4 h-4" />
               ออกจากระบบ
             </button>
-            <ThemeToggle />
           </div>
         </div>
       </aside>
@@ -137,7 +136,6 @@ export default function AppLayout({ children }: { children: ReactNode }) {
           <span className="px-1.5 py-0.5 rounded-md bg-gold/10 text-[8px] font-mono text-gold uppercase tracking-widest border border-gold/20">Beta</span>
         </div>
         <div className="flex items-center gap-2">
-          <ThemeToggle />
           <div className="w-8 h-8 rounded-full bg-surface border border-border flex items-center justify-center text-xs font-semibold text-text-hi overflow-hidden">
             {user.photoURL ? (
               <img src={user.photoURL} alt="" referrerPolicy="no-referrer" className="w-full h-full object-cover" />
@@ -149,13 +147,13 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       </header>
 
       {/* ── Main Content ── */}
-      <main className="flex-1 md:ml-72 flex flex-col overflow-hidden relative z-10">
+      <main className="flex-1 md:ml-[260px] flex flex-col overflow-hidden relative z-10">
         {/* Mobile top spacer */}
         <div className="md:hidden shrink-0" style={{ height: "calc(56px + env(safe-area-inset-top, 0px))" }} />
 
         {/* Scrollable area */}
         <div className="flex-1 overflow-y-auto overscroll-contain">
-          <div className="max-w-[1400px] mx-auto px-5 py-6 md:px-10 md:py-12">
+          <div className="max-w-[900px] mx-auto px-5 py-6 md:px-10 md:py-12 w-full">
             {children}
           </div>
           {/* Bottom spacer for nav */}

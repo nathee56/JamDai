@@ -1,8 +1,8 @@
 "use client";
 
-import { CATEGORY_CONFIG, type Note, type NoteCategory } from "@/types";
+import { CATEGORY_CONFIG, NOTE_COLORS, type Note, type NoteCategory } from "@/types";
 import { formatThaiDate, cn } from "@/lib/utils";
-import { ArrowLeft, Calendar, Tag, Trash2, Check, Sparkles, Share } from "lucide-react";
+import { ArrowLeft, Calendar, Tag, Trash2, Check, Sparkles, Share, Star } from "lucide-react";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { sendMessage } from "@/lib/thaillm";
 import { motion, AnimatePresence } from "framer-motion";
@@ -13,7 +13,7 @@ interface NoteDetailModalProps {
   open: boolean;
   onClose: () => void;
   onDelete?: (id: string) => void;
-  onUpdate?: (noteId: string, data: Partial<Pick<Note, "text" | "category">>) => void;
+  onUpdate?: (noteId: string, data: Partial<Pick<Note, "text" | "category" | "colorId" | "isStarred">>) => void;
 }
 
 const allCategories: NoteCategory[] = ["ความรู้", "การเงิน", "ความทรงจำ", "งาน", "สุขภาพ", "อื่นๆ"];
@@ -21,6 +21,8 @@ const allCategories: NoteCategory[] = ["ความรู้", "การเง
 export function NoteDetailModal({ note, open, onClose, onDelete, onUpdate }: NoteDetailModalProps) {
   const [editText, setEditText] = useState("");
   const [editCategory, setEditCategory] = useState<NoteCategory>("อื่นๆ");
+  const [editColor, setEditColor] = useState<string>("default");
+  const [isStarred, setIsStarred] = useState(false);
   const [showCategoryPicker, setShowCategoryPicker] = useState(false);
   const [saved, setSaved] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
@@ -54,6 +56,8 @@ export function NoteDetailModal({ note, open, onClose, onDelete, onUpdate }: Not
     if (note) {
       setEditText(note.text);
       setEditCategory(note.category);
+      setEditColor(note.colorId || "default");
+      setIsStarred(note.isStarred || false);
       setSaved(false);
     }
   }, [note]);
@@ -89,6 +93,9 @@ export function NoteDetailModal({ note, open, onClose, onDelete, onUpdate }: Not
   if (!note) return null;
 
   const catConfig = CATEGORY_CONFIG[editCategory];
+  const currentColor = NOTE_COLORS.find(c => c.id === editColor) || NOTE_COLORS[0];
+  const modalStyle = editColor !== "default" ? { backgroundColor: currentColor.bg } : {};
+  const textStyle = editColor !== "default" ? { color: currentColor.text } : {};
 
   return (
     <AnimatePresence>
@@ -100,21 +107,31 @@ export function NoteDetailModal({ note, open, onClose, onDelete, onUpdate }: Not
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60]"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm md:z-[60] z-[60] hidden md:block"
             onClick={onClose}
           />
-
-          {/* Bottom Sheet on Mobile / Modal on Desktop */}
           <motion.div
-            initial={{ y: "100%", opacity: 0.8 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 bg-base z-[60] md:hidden"
+          />
+
+          {/* Modal Container */}
+          <motion.div
+            initial={{ y: "20%", opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            exit={{ y: "100%", opacity: 0 }}
+            exit={{ y: "20%", opacity: 0 }}
             transition={{ type: "spring", damping: 30, stiffness: 300, mass: 0.8 }}
-            className="fixed inset-x-0 bottom-0 md:inset-0 md:flex md:items-center md:justify-center z-[70] pointer-events-none"
+            className="fixed z-[70] flex items-center justify-center pointer-events-none transition-all duration-300 inset-0 md:p-4 top-[calc(56px+env(safe-area-inset-top,0px))] md:top-0 bottom-[calc(64px+env(safe-area-inset-bottom,0px))] md:bottom-0"
           >
-            <div className="pointer-events-auto w-full md:w-full md:max-w-[700px] bg-elevated md:rounded-2xl rounded-t-2xl max-h-[90vh] overflow-y-auto safe-bottom">
+            <div 
+              className="pointer-events-auto w-full h-full md:h-auto md:max-h-[90vh] md:max-w-[600px] bg-elevated md:rounded-2xl flex flex-col overflow-hidden transition-all duration-300 shadow-2xl border border-border/10 md:border-border/40"
+              style={modalStyle}
+            >
               {/* Header */}
-              <div className="sticky top-0 bg-elevated/95 backdrop-blur-sm z-10 flex items-center justify-between px-5 py-4 border-b border-border">
+              <div className="sticky top-0 bg-transparent backdrop-blur-md z-10 flex items-center justify-between px-5 py-4 border-b border-border/50 shrink-0 md:safe-none">
                 <button
                   onClick={onClose}
                   className="flex items-center gap-2 text-text-md hover:text-text-hi transition-colors active:scale-95"
@@ -141,8 +158,26 @@ export function NoteDetailModal({ note, open, onClose, onDelete, onUpdate }: Not
                 </div>
               </div>
 
+              {/* Color Picker */}
+              <div className="px-5 py-3 border-b border-border/50 flex gap-3 overflow-x-auto hide-scrollbar">
+                {NOTE_COLORS.map(c => (
+                  <button
+                    key={c.id}
+                    onClick={() => {
+                      setEditColor(c.id);
+                      if (note && onUpdate) onUpdate(note.id, { colorId: c.id });
+                    }}
+                    className={cn(
+                      "w-6 h-6 rounded-full border-[3px] transition-transform active:scale-90 shrink-0",
+                      editColor === c.id ? "border-gold scale-110" : "border-transparent hover:scale-110"
+                    )}
+                    style={{ backgroundColor: c.bg === "var(--color-surface)" ? "#222" : c.bg }}
+                  />
+                ))}
+              </div>
+
               {/* Content */}
-              <div className="px-5 py-6 space-y-4">
+              <div className="flex-1 overflow-y-auto px-5 py-6 space-y-4 hide-scrollbar">
                 {/* Image */}
                 {note.imageUrl && (
                   <div className="w-full rounded-xl overflow-hidden">
@@ -155,7 +190,8 @@ export function NoteDetailModal({ note, open, onClose, onDelete, onUpdate }: Not
                   ref={textareaRef}
                   value={editText}
                   onChange={handleTextChange}
-                  className="w-full min-h-[200px] bg-transparent text-base text-text-hi leading-relaxed focus:outline-none resize-none font-sans placeholder:text-text-lo"
+                  className="w-full min-h-[300px] bg-transparent text-xl leading-relaxed focus:outline-none resize-none font-sans placeholder:text-text-lo/50"
+                  style={textStyle}
                   placeholder="เขียนอะไรก็ได้..."
                 />
 
@@ -221,21 +257,23 @@ export function NoteDetailModal({ note, open, onClose, onDelete, onUpdate }: Not
               </div>
 
               {/* Footer Actions */}
-              <div className="sticky bottom-0 bg-elevated/95 backdrop-blur-sm border-t border-border px-5 py-4 flex items-center justify-between safe-bottom">
-                {/* Actions: Delete & Share */}
-                <div className="flex items-center gap-2">
-                  {onDelete && (
-                    <button
-                      onClick={() => {
-                        onDelete(note.id);
-                        onClose();
-                      }}
-                      className="flex items-center gap-2 text-rose-400 hover:text-rose-500 text-sm font-medium transition-colors py-2 px-3 rounded-xl hover:bg-rose-500/10 active:scale-95"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                      ลบ
-                    </button>
-                  )}
+              <div className="mt-auto bg-transparent backdrop-blur-md border-t border-border/50 px-5 py-4 flex items-center justify-between shrink-0">
+                {/* Actions: Delete & Share & Star */}
+                <div className="flex items-center gap-1 sm:gap-2">
+                  <button
+                    onClick={() => {
+                      const newStarred = !isStarred;
+                      setIsStarred(newStarred);
+                      if (note && onUpdate) onUpdate(note.id, { isStarred: newStarred });
+                    }}
+                    className={cn(
+                      "flex items-center gap-2 text-sm font-medium transition-colors py-2 px-3 rounded-xl active:scale-95",
+                      isStarred ? "text-gold bg-gold/10 hover:bg-gold/20" : "text-text-md hover:text-text-hi hover:bg-surface"
+                    )}
+                  >
+                    <Star className={cn("w-4 h-4", isStarred ? "fill-gold" : "")} />
+                    <span className="hidden sm:inline">{isStarred ? "ติดดาวแล้ว" : "ติดดาว"}</span>
+                  </button>
                   <button
                     onClick={() => {
                       const url = `${window.location.origin}/share/${note.id}`;
@@ -245,8 +283,19 @@ export function NoteDetailModal({ note, open, onClose, onDelete, onUpdate }: Not
                     className="flex items-center gap-2 text-text-md hover:text-text-hi text-sm font-medium transition-colors py-2 px-3 rounded-xl hover:bg-surface active:scale-95"
                   >
                     <Share className="w-4 h-4" />
-                    แชร์
+                    <span className="hidden sm:inline">แชร์</span>
                   </button>
+                  {onDelete && (
+                    <button
+                      onClick={() => {
+                        onDelete(note.id);
+                        onClose();
+                      }}
+                      className="flex items-center gap-2 text-rose-400 hover:text-rose-500 text-sm font-medium transition-colors py-2 px-3 rounded-xl hover:bg-rose-500/10 active:scale-95"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  )}
                 </div>
 
                 {/* Category Picker */}

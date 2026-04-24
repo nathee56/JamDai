@@ -35,6 +35,8 @@ export async function createNote(
     category,
     imageUrl: imageUrl || null,
     pinned: false,
+    isStarred: false,
+    colorId: "default",
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   });
@@ -43,7 +45,7 @@ export async function createNote(
 
 export async function updateNote(
   noteId: string,
-  data: Partial<Pick<Note, "text" | "category" | "imageUrl" | "pinned">>
+  data: Partial<Pick<Note, "text" | "category" | "imageUrl" | "pinned" | "isStarred" | "colorId">>
 ): Promise<void> {
   const docRef = doc(db, NOTES_COLLECTION, noteId);
   await updateDoc(docRef, {
@@ -83,6 +85,8 @@ export async function getNotes(
     category: doc.data().category,
     imageUrl: doc.data().imageUrl || undefined,
     pinned: doc.data().pinned || false,
+    isStarred: doc.data().isStarred || false,
+    colorId: doc.data().colorId || "default",
     createdAt: timestampToDate(doc.data().createdAt),
     updatedAt: timestampToDate(doc.data().updatedAt),
   }));
@@ -102,6 +106,8 @@ export async function getNoteById(noteId: string): Promise<Note | null> {
     category: data.category,
     imageUrl: data.imageUrl || undefined,
     pinned: data.pinned || false,
+    isStarred: data.isStarred || false,
+    colorId: data.colorId || "default",
     createdAt: timestampToDate(data.createdAt),
     updatedAt: timestampToDate(data.updatedAt),
   };
@@ -125,6 +131,8 @@ export function subscribeToNotes(
       category: doc.data().category,
       imageUrl: doc.data().imageUrl || undefined,
       pinned: doc.data().pinned || false,
+      isStarred: doc.data().isStarred || false,
+      colorId: doc.data().colorId || "default",
       createdAt: timestampToDate(doc.data().createdAt),
       updatedAt: timestampToDate(doc.data().updatedAt),
     }));

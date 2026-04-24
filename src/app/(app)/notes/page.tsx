@@ -11,8 +11,9 @@ import { useState, useMemo } from "react";
 import toast from "react-hot-toast";
 import type { Note, NoteCategory } from "@/types";
 
-const allCategories: (NoteCategory | "all")[] = [
+const allCategories: (NoteCategory | "all" | "starred")[] = [
   "all",
+  "starred",
   "ความรู้",
   "การเงิน",
   "ความทรงจำ",
@@ -25,14 +26,16 @@ export default function NotesPage() {
   const { user } = useAuth();
   const { notes, loading, addNote, deleteNote, updateNote, togglePin } = useNotes(user?.uid);
   const [sheetOpen, setSheetOpen] = useState(false);
-  const [filter, setFilter] = useState<NoteCategory | "all">("all");
+  const [filter, setFilter] = useState<NoteCategory | "all" | "starred">("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [layout, setLayout] = useState<"masonry" | "list">("masonry");
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
 
   const filteredNotes = useMemo(() => {
     let result = notes;
-    if (filter !== "all") {
+    if (filter === "starred") {
+      result = result.filter((n) => n.isStarred || n.pinned);
+    } else if (filter !== "all") {
       result = result.filter((n) => n.category === filter);
     }
     if (searchQuery.trim()) {
@@ -42,8 +45,8 @@ export default function NotesPage() {
     return result;
   }, [notes, filter, searchQuery]);
 
-  const pinnedNotes = useMemo(() => filteredNotes.filter((n) => n.pinned), [filteredNotes]);
-  const unpinnedNotes = useMemo(() => filteredNotes.filter((n) => !n.pinned), [filteredNotes]);
+  const starredNotes = useMemo(() => filteredNotes.filter((n) => n.isStarred || n.pinned), [filteredNotes]);
+  const unstarredNotes = useMemo(() => filteredNotes.filter((n) => !n.isStarred && !n.pinned), [filteredNotes]);
 
   const handleSave = async (text: string, category: NoteCategory) => {
     await addNote(text, category);
@@ -93,7 +96,7 @@ export default function NotesPage() {
                   : "border-border text-text-lo hover:border-border-hi hover:text-text-md"
               )}
             >
-              {cat === "all" ? "ทั้งหมด" : cat}
+              {cat === "all" ? "ทั้งหมด" : cat === "starred" ? "⭐ ติดดาว" : cat}
             </button>
           ))}
         </div>
@@ -121,15 +124,15 @@ export default function NotesPage() {
         </div>
       ) : filteredNotes.length > 0 ? (
         <div className="space-y-5">
-          {/* Pinned Section */}
-          {pinnedNotes.length > 0 && (
+          {/* Starred Section */}
+          {starredNotes.length > 0 && (
             <div className="space-y-3">
               <p className="text-[10px] font-mono text-text-lo uppercase tracking-wider px-1">
-                📌 ปักหมุดไว้
+                ⭐ ติดดาวไว้
               </p>
               {layout === "masonry" ? (
                 <div className="masonry-grid">
-                  {pinnedNotes.map((note) => (
+                  {starredNotes.map((note) => (
                     <NoteCard
                       key={note.id}
                       note={note}
@@ -142,7 +145,7 @@ export default function NotesPage() {
                 </div>
               ) : (
                 <div className="space-y-3">
-                  {pinnedNotes.map((note) => (
+                  {starredNotes.map((note) => (
                     <NoteCard
                       key={note.id}
                       note={note}
@@ -157,17 +160,17 @@ export default function NotesPage() {
             </div>
           )}
 
-          {/* Unpinned Notes */}
-          {unpinnedNotes.length > 0 && (
+          {/* Unstarred Notes */}
+          {unstarredNotes.length > 0 && (
             <div className="space-y-3">
-              {pinnedNotes.length > 0 && (
+              {starredNotes.length > 0 && (
                 <p className="text-[10px] font-mono text-text-lo uppercase tracking-wider px-1">
                   อื่นๆ
                 </p>
               )}
               {layout === "masonry" ? (
                 <div className="masonry-grid">
-                  {unpinnedNotes.map((note) => (
+                  {unstarredNotes.map((note) => (
                     <NoteCard
                       key={note.id}
                       note={note}
@@ -180,7 +183,7 @@ export default function NotesPage() {
                 </div>
               ) : (
                 <div className="space-y-3">
-                  {unpinnedNotes.map((note) => (
+                  {unstarredNotes.map((note) => (
                     <NoteCard
                       key={note.id}
                       note={note}

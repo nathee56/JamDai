@@ -136,23 +136,7 @@ body {
   color: var(--color-text-inv);
 }
 
-/* ── Light Mode Overrides ── */
-.light {
-  --color-void: #F9FAFB;
-  --color-base: #FFFFFF;
-  --color-surface: #F3F4F6;
-  --color-elevated: #E5E7EB;
-  --color-border: #E5E7EB;
-  --color-border-hi: #D1D5DB;
-  --color-gold: #D97706;
-  --color-gold-dim: #B45309;
-  --color-gold-mist: rgba(217, 119, 6, 0.08);
-  --color-gold-glow: rgba(217, 119, 6, 0.12);
-  --color-text-hi: #111827;
-  --color-text-md: #4B5563;
-  --color-text-lo: #9CA3AF;
-  --color-text-inv: #FFFFFF;
-}
+
 
 /* ── Utility: hide scrollbar ── */
 .hide-scrollbar {

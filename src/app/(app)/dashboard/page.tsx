@@ -202,7 +202,7 @@ export default function DashboardPage() {
       <div className="hidden md:flex justify-center mb-10">
         <div
           onClick={() => setSheetOpen(true)}
-          className="w-full max-w-[600px] bg-surface border border-border rounded-[14px] px-5 py-3.5 flex items-center justify-between text-text-lo hover:border-border-hi transition-all cursor-text active:scale-[0.99]"
+          className="w-full max-w-[700px] bg-surface border border-border rounded-[14px] px-5 py-3.5 flex items-center justify-between text-text-lo hover:border-border-hi transition-all cursor-text active:scale-[0.99]"
         >
           <span className="text-sm font-medium">จดบันทึกใหม่...</span>
           <Plus className="w-5 h-5" />
@@ -223,16 +223,17 @@ export default function DashboardPage() {
             </Link>
           </div>
 
-          <div className="masonry-grid">
+          <div className="grid grid-cols-2 gap-3 md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-4">
             {recentNotes.map((note) => (
-              <NoteCard
-                key={note.id}
-                note={note}
-                layout="masonry"
-                onDelete={handleDelete}
-                onPin={handlePin}
-                onClick={() => setSelectedNote(note)}
-              />
+              <div key={note.id} className="w-full">
+                <NoteCard
+                  note={note}
+                  layout="masonry"
+                  onDelete={handleDelete}
+                  onPin={handlePin}
+                  onClick={() => setSelectedNote(note)}
+                />
+              </div>
             ))}
           </div>
         </div>

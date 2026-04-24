@@ -1,8 +1,8 @@
 "use client";
 
 import { cn, formatRelativeDate } from "@/lib/utils";
-import { Pin, Trash2, MoreVertical } from "lucide-react";
-import { CATEGORY_CONFIG, type Note } from "@/types";
+import { Star, Trash2, MoreVertical } from "lucide-react";
+import { CATEGORY_CONFIG, NOTE_COLORS, type Note } from "@/types";
 import { useState, useRef, useCallback } from "react";
 
 interface NoteCardProps {
@@ -15,6 +15,15 @@ interface NoteCardProps {
 
 export function NoteCard({ note, onDelete, onPin, onClick, layout = "masonry" }: NoteCardProps) {
   const catConfig = CATEGORY_CONFIG[note.category];
+  const colorConfig = NOTE_COLORS.find(c => c.id === note.colorId) || NOTE_COLORS[0];
+  const cardStyle = note.colorId && note.colorId !== "default" 
+    ? { backgroundColor: colorConfig.bg, borderColor: colorConfig.bg }
+    : {};
+    
+  const textStyle = note.colorId && note.colorId !== "default"
+    ? { color: colorConfig.text }
+    : {};
+
   const [contextMenu, setContextMenu] = useState(false);
   const longPressTimer = useRef<NodeJS.Timeout | null>(null);
   const longPressTriggered = useRef(false);
@@ -61,14 +70,15 @@ export function NoteCard({ note, onDelete, onPin, onClick, layout = "masonry" }:
             }
           }}
           className="bg-surface border border-border rounded-[14px] p-4 transition-all duration-150 hover:border-border-hi active:scale-[0.98] cursor-pointer flex items-start gap-4"
+          style={cardStyle}
         >
-          {/* Pin indicator */}
-          {note.pinned && (
-            <Pin className="w-3.5 h-3.5 text-gold shrink-0 mt-1 fill-gold" />
+          {/* Star indicator */}
+          {note.isStarred && (
+            <Star className="w-3.5 h-3.5 text-gold shrink-0 mt-1 fill-gold" />
           )}
 
           <div className="flex-1 min-w-0">
-            <p className="text-sm text-text-hi leading-relaxed line-clamp-2 mb-2">
+            <p className="text-sm text-text-hi leading-relaxed line-clamp-2 mb-2" style={textStyle}>
               {note.text}
             </p>
             <div className="flex items-center gap-2">
@@ -115,11 +125,12 @@ export function NoteCard({ note, onDelete, onPin, onClick, layout = "masonry" }:
           }
         }}
         className="bg-surface border border-border rounded-[14px] p-4 transition-all duration-150 hover:border-border-hi active:scale-[0.98] cursor-pointer flex flex-col relative group"
+        style={cardStyle}
       >
-        {/* Pin icon */}
-        {note.pinned && (
+        {/* Star icon */}
+        {note.isStarred && (
           <div className="absolute top-3 right-3 z-10">
-            <Pin className="w-3.5 h-3.5 text-gold fill-gold" />
+            <Star className="w-3.5 h-3.5 text-gold fill-gold" />
           </div>
         )}
 
@@ -135,7 +146,7 @@ export function NoteCard({ note, onDelete, onPin, onClick, layout = "masonry" }:
         )}
 
         {/* Text — show based on content length for masonry effect */}
-        <p className="text-sm text-text-md leading-relaxed line-clamp-6 mb-3 flex-1">
+        <p className="text-sm text-text-md leading-relaxed line-clamp-3 mb-3 flex-1" style={textStyle}>
           {note.text}
         </p>
 
@@ -200,9 +211,9 @@ function ContextMenu({
               }}
               className="w-full flex items-center gap-4 px-5 py-4 text-text-hi hover:bg-surface transition-colors active:scale-[0.98]"
             >
-              <Pin className={cn("w-5 h-5", note.pinned ? "text-gold fill-gold" : "text-text-md")} />
+              <Star className={cn("w-5 h-5", note.isStarred ? "text-gold fill-gold" : "text-text-md")} />
               <span className="text-sm font-medium">
-                {note.pinned ? "เลิกปักหมุด" : "ปักหมุด"}
+                {note.isStarred ? "เลิกติดดาว" : "ติดดาว"}
               </span>
             </button>
           )}

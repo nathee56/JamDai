@@ -13,9 +13,21 @@ export interface Note {
   category: NoteCategory;
   imageUrl?: string;
   pinned?: boolean;
+  isStarred?: boolean;
+  colorId?: string;
   createdAt: Date;
   updatedAt: Date;
 }
+
+export const NOTE_COLORS = [
+  { id: "default", bg: "var(--color-surface)", text: "var(--color-text-hi)" },
+  { id: "pink", bg: "#3D2030", text: "#F9A8D4" },
+  { id: "purple", bg: "#2D1F3D", text: "#C4B5FD" },
+  { id: "blue", bg: "#1A2F3D", text: "#93C5FD" },
+  { id: "green", bg: "#1A2E1F", text: "#86EFAC" },
+  { id: "navy", bg: "#1A1F3D", text: "#A5B4FC" },
+  { id: "orange", bg: "#2E1F0A", text: "#FED7AA" },
+];
 
 export interface ChatMessage {
   id: string;

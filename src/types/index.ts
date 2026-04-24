@@ -41,6 +41,7 @@ export interface User {
   displayName: string | null;
   email: string | null;
   photoURL: string | null;
+  isAnonymous?: boolean;
 }
 
 export const CATEGORY_CONFIG: Record<

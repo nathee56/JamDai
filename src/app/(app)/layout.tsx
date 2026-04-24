@@ -109,8 +109,13 @@ export default function AppLayout({ children }: { children: ReactNode }) {
               )}
             </div>
             <div className="min-w-0">
-              <p className="text-base text-text-hi font-semibold truncate">{user.displayName || "ผู้ใช้งาน"}</p>
-              <p className="text-xs text-text-lo truncate">{user.email}</p>
+              <div className="flex items-center gap-2">
+                <p className="text-base text-text-hi font-semibold truncate">{user.displayName || "ผู้ใช้งาน"}</p>
+                {user.isAnonymous && (
+                  <span className="px-1.5 py-0.5 rounded-md bg-white/10 text-[9px] font-mono text-text-lo uppercase tracking-widest border border-white/10">Guest</span>
+                )}
+              </div>
+              <p className="text-xs text-text-lo truncate">{user.isAnonymous ? "ข้อมูลจะไม่ถูกบันทึกถาวร" : user.email}</p>
             </div>
           </div>
           <div className="flex items-center justify-between mt-2">
@@ -136,6 +141,9 @@ export default function AppLayout({ children }: { children: ReactNode }) {
           <span className="px-1.5 py-0.5 rounded-md bg-gold/10 text-[8px] font-mono text-gold uppercase tracking-widest border border-gold/20">Beta</span>
         </div>
         <div className="flex items-center gap-2">
+          {user.isAnonymous && (
+            <span className="px-1.5 py-0.5 rounded-md bg-white/10 text-[9px] font-mono text-text-lo uppercase tracking-widest border border-white/10">Guest</span>
+          )}
           <div className="w-8 h-8 rounded-full bg-surface border border-border flex items-center justify-center text-xs font-semibold text-text-hi overflow-hidden">
             {user.photoURL ? (
               <img src={user.photoURL} alt="" referrerPolicy="no-referrer" className="w-full h-full object-cover" />

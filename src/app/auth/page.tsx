@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 
 export default function AuthPage() {
-  const { user, loading, signInWithGoogle } = useAuth();
+  const { user, loading, signInWithGoogle, signInGuest } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -22,6 +22,14 @@ export default function AuthPage() {
       await signInWithGoogle();
     } catch (err: any) {
       toast.error(err.message || "เกิดข้อผิดพลาดในการเข้าสู่ระบบ");
+    }
+  };
+
+  const handleGuestSignIn = async () => {
+    try {
+      await signInGuest();
+    } catch (err: any) {
+      toast.error(err.message || "เกิดข้อผิดพลาดในการเข้าถึงโหมดทดลอง");
     }
   };
 
@@ -97,6 +105,15 @@ export default function AuthPage() {
             />
           </svg>
           {loading ? "กำลังโหลด..." : "เข้าสู่ระบบด้วย Google"}
+        </button>
+
+        {/* Guest Mode Button */}
+        <button
+          onClick={handleGuestSignIn}
+          disabled={loading}
+          className="w-full mt-3 flex items-center justify-center gap-2 bg-transparent text-text-md border border-border font-medium text-sm py-3 px-4 rounded-md hover:bg-surface hover:text-text-hi active:scale-[0.98] transition-all duration-150 cursor-pointer disabled:opacity-50"
+        >
+          ลองใช้งานก่อน (โหมดชั่วคราว)
         </button>
 
         {/* Footer */}

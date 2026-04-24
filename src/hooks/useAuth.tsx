@@ -13,6 +13,7 @@ import {
   signOut as firebaseSignOut,
   onAuthStateChanged,
   updateProfile,
+  signInAnonymously,
   type User as FirebaseUser,
 } from "firebase/auth";
 import { auth } from "@/lib/firebase";
@@ -22,6 +23,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   signInWithGoogle: () => Promise<void>;
+  signInGuest: () => Promise<void>;
   signOut: () => Promise<void>;
   updateUserProfile: (data: { displayName?: string; photoURL?: string }) => Promise<void>;
 }
@@ -30,6 +32,7 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
   signInWithGoogle: async () => {},
+  signInGuest: async () => {},
   signOut: async () => {},
   updateUserProfile: async () => {},
 });
@@ -37,9 +40,10 @@ const AuthContext = createContext<AuthContextType>({
 function mapFirebaseUser(fbUser: FirebaseUser): User {
   return {
     uid: fbUser.uid,
-    displayName: fbUser.displayName,
+    displayName: fbUser.displayName || "ผู้ใช้งานชั่วคราว",
     email: fbUser.email,
-    photoURL: fbUser.photoURL,
+    photoURL: fbUser.photoURL || null,
+    isAnonymous: fbUser.isAnonymous
   };
 }
 
@@ -60,6 +64,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await signInWithPopup(auth, provider);
   };
 
+  const signInGuest = async () => {
+    await signInAnonymously(auth);
+  };
+
   const signOut = async () => {
     await firebaseSignOut(auth);
     setUser(null);
@@ -73,7 +81,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, signInWithGoogle, signOut, updateUserProfile }}>
+    <AuthContext.Provider value={{ user, loading, signInWithGoogle, signInGuest, signOut, updateUserProfile }}>
       {children}
     </AuthContext.Provider>
   );

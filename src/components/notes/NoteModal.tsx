@@ -177,7 +177,7 @@ export function NoteModal({ open, onClose, onSave }: NoteModalProps) {
       </div>
 
       {/* AI Indicator & Save */}
-      <div className="flex flex-col gap-4 pt-4 pb-8 shrink-0 border-t border-border/10">
+      <div className="flex flex-col gap-4 pt-4 pb-4 shrink-0 border-t border-border/10">
         {reminder && (
           <div className="bg-gold/10 border border-gold/20 rounded-2xl p-4 flex items-center justify-between animate-in slide-in-from-bottom-2 duration-300">
             <div className="flex items-center gap-3">

@@ -33,7 +33,7 @@ export function Modal({ open, onClose, title, children, fullScreen = false }: Mo
             className={cn(
               "fixed z-[70] flex items-center justify-center pointer-events-none transition-all duration-300",
               fullScreen 
-                ? "inset-0 md:inset-0 p-0 md:p-4 top-[calc(56px+env(safe-area-inset-top,0px))] md:top-0 bottom-[calc(80px+env(safe-area-inset-bottom,0px))] md:bottom-0" 
+                ? "inset-0 md:inset-0 p-0 md:p-4 top-[var(--header-top-height)] md:top-0 bottom-[var(--nav-bottom-height)] md:bottom-0" 
                 : "inset-0 p-2 sm:p-4"
             )}
           >

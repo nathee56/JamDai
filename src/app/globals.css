@@ -53,6 +53,10 @@
   --tracking-wide: 0.08em;
   --tracking-wider: 0.12em;
 
+  /* ── Layout Heights ── */
+  --header-top-height: calc(56px + env(safe-area-inset-top, 0px));
+  --nav-bottom-height: calc(64px + env(safe-area-inset-bottom, 0px));
+
   /* ── Transitions ── */
   --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
 

@@ -165,7 +165,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       <nav
         className="md:hidden fixed left-0 right-0 bottom-0 z-40 border-t safe-bottom"
         style={{
-          height: `calc(64px + env(safe-area-inset-bottom, 0px))`,
+          height: `var(--nav-bottom-height)`,
           background: "rgba(13,13,13,0.92)",
           backdropFilter: "blur(40px)",
           WebkitBackdropFilter: "blur(40px)",

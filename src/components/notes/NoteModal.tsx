@@ -112,12 +112,31 @@ export function NoteModal({ open, onClose, onSave }: NoteModalProps) {
     <Modal open={open} onClose={handleClose} fullScreen={true}>
       {/* Header with Close button */}
       <div className="flex items-center justify-between mb-6 shrink-0">
-        <h3 className="font-display font-bold text-xl text-text-hi">สร้างบันทึกใหม่</h3>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleClose}
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-surface text-text-lo hover:text-text-md active:scale-90 transition-all"
+          >
+            <X className="w-5 h-5" />
+          </button>
+          <h3 className="font-display font-bold text-xl text-text-hi">สร้างบันทึกใหม่</h3>
+        </div>
+        
         <button
-          onClick={handleClose}
-          className="w-10 h-10 flex items-center justify-center rounded-full bg-surface text-text-lo hover:text-text-md active:scale-90 transition-all"
+          onClick={handleSave}
+          disabled={!text.trim() || saving || analyzing}
+          className={cn(
+            "px-6 py-2.5 rounded-full font-bold text-sm transition-all active:scale-95 flex items-center gap-2",
+            !text.trim() || saving || analyzing
+              ? "bg-border/50 text-text-lo cursor-not-allowed"
+              : "bg-gold text-text-inv shadow-lg shadow-gold/20"
+          )}
         >
-          <X className="w-5 h-5" />
+          {saving || analyzing ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            "บันทึก"
+          )}
         </button>
       </div>
 
@@ -176,46 +195,40 @@ export function NoteModal({ open, onClose, onSave }: NoteModalProps) {
 
       </div>
 
-      {/* AI Indicator & Save */}
-      <div className="flex flex-col gap-4 pt-4 pb-4 shrink-0 border-t border-border/10">
-        {reminder && (
-          <div className="bg-gold/10 border border-gold/20 rounded-2xl p-4 flex items-center justify-between animate-in slide-in-from-bottom-2 duration-300">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-gold/20 flex items-center justify-center text-gold">
-                <Bell className="w-5 h-5" />
+      {/* AI Status & Reminder */}
+      {(reminder || analyzing) && (
+        <div className="flex flex-col gap-4 pt-4 shrink-0 border-t border-border/10">
+          {reminder && (
+            <div className="bg-gold/10 border border-gold/20 rounded-2xl p-4 flex items-center justify-between animate-in slide-in-from-bottom-2 duration-300">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-gold/20 flex items-center justify-center text-gold">
+                  <Bell className="w-5 h-5" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs font-bold text-gold uppercase tracking-wider">ตรวจพบการนัดหมาย</p>
+                  <p className="text-sm text-text-hi truncate">{reminder.suggestion}</p>
+                </div>
               </div>
-              <div className="min-w-0">
-                <p className="text-xs font-bold text-gold uppercase tracking-wider">ตรวจพบการนัดหมาย</p>
-                <p className="text-sm text-text-hi truncate">{reminder.suggestion}</p>
-              </div>
+              <button 
+                onClick={() => {
+                  toast.success("ตั้งแจ้งเตือนแล้ว (จำลอง)");
+                  setReminder(null);
+                }}
+                className="px-4 py-2 bg-gold text-text-inv text-xs font-bold rounded-xl hover:bg-gold-dim transition-colors"
+              >
+                ตั้งเตือน
+              </button>
             </div>
-            <button 
-              onClick={() => {
-                toast.success("ตั้งแจ้งเตือนแล้ว (จำลอง)");
-                setReminder(null);
-              }}
-              className="px-4 py-2 bg-gold text-text-inv text-xs font-bold rounded-xl hover:bg-gold-dim transition-colors"
-            >
-              ตั้งเตือน
-            </button>
-          </div>
-        )}
+          )}
 
-        {analyzing && (
-          <div className="flex items-center justify-center gap-2 text-gold animate-pulse text-sm">
-            <Bot className="w-4 h-4" />
-            <span>AI กำลังวิเคราะห์หมวดหมู่...</span>
-          </div>
-        )}
-        <Button
-          variant="primary"
-          className="w-full text-xl py-6 rounded-[24px] shadow-xl shadow-gold/20"
-          onClick={handleSave}
-          disabled={!text.trim() || saving || analyzing}
-        >
-          {saving ? "กำลังบันทึก..." : analyzing ? "รอสักครู่..." : "บันทึกโน้ต (AI จัดหมวดหมู่ให้)"}
-        </Button>
-      </div>
+          {analyzing && (
+            <div className="flex items-center justify-center gap-2 text-gold animate-pulse text-sm py-2">
+              <Bot className="w-4 h-4" />
+              <span>AI กำลังวิเคราะห์หมวดหมู่...</span>
+            </div>
+          )}
+        </div>
+      )}
     </Modal>
   );
 }

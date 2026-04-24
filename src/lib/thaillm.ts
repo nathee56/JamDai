@@ -19,6 +19,7 @@ function buildSystemPrompt(notes: Note[]): string {
 5. ถ้าไม่พบข้อมูลในโน้ต ให้บอกตรงๆ ว่าไม่พบ ไม่ต้องแต่งเรื่อง
 6. ตอบกระชับ ตรงประเด็น ไม่ต้องมีคำทักทายซ้ำทุกครั้ง
 7. ถ้าผู้ใช้ถามเรื่องที่ไม่เกี่ยวกับโน้ต ให้ช่วยตอบได้ แต่บอกว่าไม่ได้มาจากโน้ต
+8. ห้ามพิมพ์แท็ก <think> หรือแสดงกระบวนการคิดออกมาเด็ดขาด ให้ตอบคำตอบมาเลยตรงๆ
 
 context โน้ตของผู้ใช้:
 ${notesContext || "(ยังไม่มีข้อมูล)"}`;
@@ -44,7 +45,7 @@ async function callAI(
     const content = data.choices?.[0]?.message?.content || "";
     
     // Strip <think>...</think> tags if they exist
-    return content.replace(/<think>[\s\S]*?<\/think>/g, "").trim() || "ไม่สามารถตอบได้ในขณะนี้";
+    return content.replace(/<think>[\s\S]*?<\/think>/gi, "").replace(/<think>/gi, "").trim() || "ไม่สามารถตอบได้ในขณะนี้";
   } catch (error) {
     console.error("AI call failed:", error);
     throw error;
@@ -170,7 +171,8 @@ export async function summarizeNotes(notes: Note[]): Promise<string> {
 - สรุปเป็นภาษาไทย 2-3 ประโยคสั้นๆ อ่านได้ใน 5 วินาที
 - ห้ามใช้ ** ** หรือ markdown format — ใช้ภาษาพูดธรรมดา
 - เน้นภาพรวมว่าช่วงนี้ผู้ใช้ทำอะไรหรือกังวลเรื่องอะไร
-- ตอบกระชับ ตรงประเด็น`
+- ตอบกระชับ ตรงประเด็น
+- ห้ามพิมพ์แท็ก <think> เด็ดขาด`
       },
       { role: "user", content: `โน้ตล่าสุด:\n${recentNotes}` }
     ];

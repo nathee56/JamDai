@@ -221,3 +221,15 @@ body {
 .safe-bottom {
   padding-bottom: env(safe-area-inset-bottom);
 }
+
+/* ── Elderly Mode ── */
+html.elderly-mode {
+  font-size: 120%;
+}
+html.elderly-mode button,
+html.elderly-mode a,
+html.elderly-mode [role="button"],
+html.elderly-mode input,
+html.elderly-mode textarea {
+  min-height: 48px;
+}

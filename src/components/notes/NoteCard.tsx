@@ -18,26 +18,31 @@ export function NoteCard({ note, onDelete, onPin, onClick, layout = "masonry" }:
   const [contextMenu, setContextMenu] = useState(false);
   const longPressTimer = useRef<NodeJS.Timeout | null>(null);
   const longPressTriggered = useRef(false);
+  const isScrolling = useRef(false);
 
   const handleTouchStart = useCallback(() => {
     longPressTriggered.current = false;
+    isScrolling.current = false;
     longPressTimer.current = setTimeout(() => {
-      longPressTriggered.current = true;
-      setContextMenu(true);
+      if (!isScrolling.current) {
+        longPressTriggered.current = true;
+        setContextMenu(true);
+      }
     }, 500);
   }, []);
 
-  const handleTouchEnd = useCallback(() => {
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
     if (longPressTimer.current) {
       clearTimeout(longPressTimer.current);
     }
-    // Only trigger click if long press was NOT triggered
-    if (!longPressTriggered.current && onClick) {
+    if (!longPressTriggered.current && !isScrolling.current && onClick) {
+      e.preventDefault();
       onClick();
     }
   }, [onClick]);
 
   const handleTouchMove = useCallback(() => {
+    isScrolling.current = true;
     if (longPressTimer.current) {
       clearTimeout(longPressTimer.current);
     }
@@ -50,7 +55,11 @@ export function NoteCard({ note, onDelete, onPin, onClick, layout = "masonry" }:
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
           onTouchMove={handleTouchMove}
-          onClick={onClick}
+          onClick={(e) => {
+            if (!longPressTriggered.current) {
+              onClick?.();
+            }
+          }}
           className="bg-surface border border-border rounded-[14px] p-4 transition-all duration-150 hover:border-border-hi active:scale-[0.98] cursor-pointer flex items-start gap-4"
         >
           {/* Pin indicator */}
@@ -101,8 +110,7 @@ export function NoteCard({ note, onDelete, onPin, onClick, layout = "masonry" }:
         onTouchEnd={handleTouchEnd}
         onTouchMove={handleTouchMove}
         onClick={(e) => {
-          // Desktop click handler
-          if (!('ontouchstart' in window)) {
+          if (!longPressTriggered.current) {
             onClick?.();
           }
         }}

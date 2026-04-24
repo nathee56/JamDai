@@ -15,7 +15,9 @@ import {
   Bot,
   Sparkles,
   Info,
+  Eye,
 } from "lucide-react";
+import { useUI } from "@/components/providers/UIProvider";
 import { Modal } from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";
 import toast from "react-hot-toast";
@@ -23,6 +25,7 @@ import toast from "react-hot-toast";
 export default function SettingsPage() {
   const { user, signOut, updateUserProfile } = useAuth();
   const { theme, setTheme } = useTheme();
+  const { elderlyMode, toggleElderlyMode } = useUI();
   const [mounted, setMounted] = useState(false);
 
   // Profile states
@@ -151,7 +154,7 @@ export default function SettingsPage() {
       {/* ── Section: การแสดงผล ── */}
       <section className="space-y-3">
         <p className="text-[10px] font-mono font-semibold text-text-lo tracking-widest uppercase px-1">การแสดงผล</p>
-        <div className="bg-surface border border-border rounded-[14px] overflow-hidden">
+        <div className="bg-surface border border-border rounded-[14px] overflow-hidden divide-y divide-border">
           <div className="px-4 py-4">
             <p className="text-[10px] text-text-lo uppercase tracking-widest font-mono mb-3">โหมดสี</p>
             <div className="grid grid-cols-2 gap-2">
@@ -177,6 +180,21 @@ export default function SettingsPage() {
               </button>
             </div>
           </div>
+          <button
+            onClick={toggleElderlyMode}
+            className="w-full flex items-center justify-between px-4 py-4 hover:bg-base/50 transition-colors active:scale-[0.98]"
+          >
+            <div className="flex items-center gap-3">
+              <Eye className="w-5 h-5 text-text-md" />
+              <div className="text-left">
+                <span className="text-sm text-text-hi font-medium block">โหมดสายตา</span>
+                <span className="text-[10px] text-text-lo">{elderlyMode ? "กำลังใช้งาน" : "ปิดการใช้งาน"}</span>
+              </div>
+            </div>
+            <div className={cn("w-11 h-6 rounded-full p-0.5 transition-colors", elderlyMode ? "bg-gold" : "bg-border")}>
+              <div className={cn("w-5 h-5 bg-white rounded-full transition-transform", elderlyMode ? "translate-x-5" : "translate-x-0")} />
+            </div>
+          </button>
         </div>
       </section>
 
@@ -192,6 +210,11 @@ export default function SettingsPage() {
               <p className="text-sm font-semibold text-text-hi">JamDai AI</p>
               <p className="text-xs text-text-lo">ผู้ช่วยความจำส่วนตัว สรุปและค้นหาโน้ตอัตโนมัติ</p>
             </div>
+          </div>
+          <div className="px-4 py-3 bg-base/30 border-t border-border">
+            <p className="text-[10px] text-text-lo leading-relaxed">
+              ข้อมูลโน้ตของคุณถูกส่งไปประมวลผล เฉพาะตอนที่คุณใช้ AI เท่านั้น เราไม่เก็บหรือนำข้อมูลไปใช้เพื่อฝึก AI
+            </p>
           </div>
         </div>
       </section>

@@ -7,7 +7,7 @@ import Link from "next/link";
 
 export function Hero() {
   return (
-    <section className="relative min-h-dvh flex flex-col items-center justify-center text-center px-6 overflow-hidden">
+    <section className="relative min-h-[100dvh] flex flex-col items-center justify-center text-center px-6 overflow-hidden">
       {/* Background: radial gold gradient */}
       <div
         className="absolute inset-0 pointer-events-none"

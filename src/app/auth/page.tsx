@@ -26,7 +26,7 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="min-h-dvh bg-void flex items-center justify-center p-6 relative">
+    <div className="min-h-[100dvh] bg-void flex items-center justify-center p-6 relative">
       {/* Theme toggle */}
       <div className="absolute top-4 right-4">
         <ThemeToggle />

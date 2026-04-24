@@ -15,6 +15,8 @@ import {
   Settings,
 } from "lucide-react";
 import Link from "next/link";
+import { Onboarding } from "@/components/ui/Onboarding";
+import { motion } from "framer-motion";
 import type { ReactNode } from "react";
 
 const navItems = [
@@ -46,7 +48,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
 
   if (loading || !mounted) {
     return (
-      <div className="min-h-dvh bg-void flex items-center justify-center">
+      <div className="min-h-[100dvh] bg-void flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <span className="font-display font-bold text-3xl text-gold italic">จำได้</span>
           <div className="w-6 h-6 border-2 border-gold/30 border-t-gold rounded-full animate-spin" />
@@ -60,14 +62,15 @@ export default function AppLayout({ children }: { children: ReactNode }) {
   const initial = (user.displayName || user.email || "?").charAt(0).toUpperCase();
 
   return (
-    <div className="h-dvh bg-base flex overflow-hidden relative">
+    <div className="h-[100dvh] bg-base flex overflow-hidden relative">
       {isLocked && <LockScreen onUnlock={() => setIsLocked(false)} />}
+      <Onboarding />
 
       {/* ── Desktop Sidebar ── */}
-      <aside className="hidden md:flex w-72 h-dvh fixed top-0 left-0 flex-col border-r border-border p-8 z-30 bg-surface">
-        <div className="mb-10">
-          <span className="font-display font-bold text-3xl text-gold tracking-tight italic">จำได้</span>
-          <span className="block font-mono text-xs text-text-lo tracking-wider uppercase mt-1">JamDai</span>
+      <aside className="hidden md:flex w-72 h-[100dvh] fixed top-0 left-0 flex-col border-r border-border p-8 z-30 bg-surface">
+        <div className="mb-10 flex items-start gap-2">
+          <span className="font-display font-bold text-3xl text-gold tracking-tight italic">JamDai</span>
+          <span className="px-1.5 py-0.5 mt-1.5 rounded-md bg-gold/10 text-[10px] font-mono text-gold uppercase tracking-widest border border-gold/20">Beta</span>
         </div>
 
         <nav className="flex-1 space-y-1">
@@ -95,7 +98,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
           <div className="flex items-center gap-4">
             <div className="w-10 h-10 rounded-full bg-gold/20 text-gold flex items-center justify-center text-sm font-bold shrink-0 overflow-hidden">
               {user.photoURL ? (
-                <img src={user.photoURL} alt="" className="w-full h-full object-cover" />
+                <img src={user.photoURL} alt="" referrerPolicy="no-referrer" className="w-full h-full object-cover" />
               ) : (
                 initial
               )}
@@ -123,12 +126,15 @@ export default function AppLayout({ children }: { children: ReactNode }) {
         className="md:hidden fixed top-0 left-0 right-0 flex items-center justify-between px-5 z-40 shrink-0 bg-base/80 backdrop-blur-2xl border-b border-white/[0.06] safe-top"
         style={{ height: "calc(56px + env(safe-area-inset-top, 0px))" }}
       >
-        <span className="font-display font-bold text-xl text-text-hi tracking-tight italic">จำได้.</span>
+        <div className="flex items-center gap-1.5">
+          <span className="font-display font-bold text-xl text-text-hi tracking-tight italic">JamDai</span>
+          <span className="px-1.5 py-0.5 rounded-md bg-gold/10 text-[9px] font-mono text-gold uppercase tracking-widest border border-gold/20">Beta</span>
+        </div>
         <div className="flex items-center gap-2">
           <ThemeToggle />
           <div className="w-8 h-8 rounded-full bg-surface border border-border flex items-center justify-center text-xs font-semibold text-text-hi overflow-hidden">
             {user.photoURL ? (
-              <img src={user.photoURL} alt="" className="w-full h-full object-cover" />
+              <img src={user.photoURL} alt="" referrerPolicy="no-referrer" className="w-full h-full object-cover" />
             ) : (
               initial
             )}
@@ -169,31 +175,51 @@ export default function AppLayout({ children }: { children: ReactNode }) {
               <Link
                 key={item.href}
                 href={item.href}
-                className="flex flex-col items-center justify-center gap-1 relative pt-2 flex-1 transition-colors duration-150"
+                className="flex flex-col items-center justify-center relative pt-2 flex-1 outline-none"
               >
                 {/* Active indicator line — top */}
-                {active && (
-                  <span
-                    className="absolute top-0 left-1/2 -translate-x-1/2 w-5 h-0.5 rounded-[1px] bg-gold"
-                    style={{ animation: "indicator-in 0.2s cubic-bezier(0.16,1,0.3,1) forwards" }}
-                  />
-                )}
+                <div className="absolute top-0 left-0 right-0 flex justify-center pointer-events-none">
+                  {active && (
+                    <motion.span
+                      initial={{ scaleX: 0, opacity: 0 }}
+                      animate={{ scaleX: 1, opacity: 1 }}
+                      transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                      className="w-5 h-0.5 rounded-[1px] bg-gold"
+                    />
+                  )}
+                </div>
 
-                <item.icon
-                  className={cn(
-                    "w-[22px] h-[22px] transition-colors duration-150",
-                    active ? "text-gold" : "text-[#505050]"
-                  )}
-                  strokeWidth={1.5}
-                />
-                <span
-                  className={cn(
-                    "text-[9px] font-mono uppercase tracking-wider transition-colors duration-150",
-                    active ? "text-gold" : "text-[#505050]"
-                  )}
+                <motion.div
+                  whileTap={{ scale: 0.85, y: 2 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                  className="flex flex-col items-center justify-center gap-1 w-full"
                 >
-                  {item.label}
-                </span>
+                  <motion.div
+                    animate={
+                      active
+                        ? { scale: [1, 1.15, 0.95, 1], rotate: [0, -10, 10, 0] }
+                        : { scale: 1, rotate: 0 }
+                    }
+                    transition={{ duration: 0.4, ease: "easeInOut" }}
+                  >
+                    <item.icon
+                      className={cn(
+                        "w-[22px] h-[22px] transition-colors duration-300",
+                        active ? "text-gold" : "text-[#505050]"
+                      )}
+                      strokeWidth={active ? 2 : 1.5}
+                      fill={active ? "rgba(240, 180, 41, 0.2)" : "none"}
+                    />
+                  </motion.div>
+                  <span
+                    className={cn(
+                      "text-[9px] font-mono uppercase tracking-wider transition-colors duration-300",
+                      active ? "text-gold font-bold" : "text-[#505050] font-medium"
+                    )}
+                  >
+                    {item.label}
+                  </span>
+                </motion.div>
               </Link>
             );
           })}

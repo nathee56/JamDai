@@ -57,8 +57,9 @@ export default function RootLayout({
       lang="th"
       className={`${geistSans.variable} ${geistMono.variable} ${ibmPlex.variable}`}
       suppressHydrationWarning
+      data-scroll-behavior="smooth"
     >
-      <body className="min-h-dvh bg-base text-text-hi antialiased">
+      <body className="min-h-[100dvh] bg-base text-text-hi antialiased">
         <ThemeProvider>
           <UIProvider>
             <AuthProvider>

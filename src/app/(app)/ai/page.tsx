@@ -118,7 +118,7 @@ export default function AIPage() {
       </div>
 
       {/* Input Bar — Fixed at bottom */}
-      <div className="shrink-0 border-t border-border bg-base px-4 py-3 safe-bottom">
+      <div className="shrink-0 border-t border-border bg-base px-4 pt-3 pb-[calc(64px+env(safe-area-inset-bottom,0px))] md:pb-3">
         <div className="max-w-[800px] mx-auto flex items-end gap-2">
           <textarea ref={textareaRef} value={input} onChange={handleInput} onKeyDown={handleKeyDown} placeholder="คุยกับ AI..." rows={1} className="flex-1 bg-surface border border-border rounded-2xl px-4 py-3 text-sm text-text-hi placeholder:text-text-lo/50 focus:border-gold/40 focus:outline-none resize-none max-h-24 transition-all leading-relaxed" />
           <button onClick={() => handleSend()} disabled={!input.trim() || isLoading} className={cn("w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 transition-all active:scale-90", input.trim() ? "bg-gold text-text-inv" : "bg-surface border border-border text-text-lo opacity-50")}>

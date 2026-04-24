@@ -4,6 +4,7 @@ import {
   updateDoc,
   deleteDoc,
   doc,
+  getDoc,
   query,
   where,
   orderBy,
@@ -85,6 +86,25 @@ export async function getNotes(
     createdAt: timestampToDate(doc.data().createdAt),
     updatedAt: timestampToDate(doc.data().updatedAt),
   }));
+}
+
+export async function getNoteById(noteId: string): Promise<Note | null> {
+  const docRef = doc(db, NOTES_COLLECTION, noteId);
+  const snapshot = await getDoc(docRef);
+  
+  if (!snapshot.exists()) return null;
+  
+  const data = snapshot.data();
+  return {
+    id: snapshot.id,
+    userId: data.userId,
+    text: data.text,
+    category: data.category,
+    imageUrl: data.imageUrl || undefined,
+    pinned: data.pinned || false,
+    createdAt: timestampToDate(data.createdAt),
+    updatedAt: timestampToDate(data.updatedAt),
+  };
 }
 
 export function subscribeToNotes(

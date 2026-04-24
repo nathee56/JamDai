@@ -2,9 +2,11 @@
 
 import { CATEGORY_CONFIG, type Note, type NoteCategory } from "@/types";
 import { formatThaiDate, cn } from "@/lib/utils";
-import { ArrowLeft, Calendar, Tag, Trash2, Check } from "lucide-react";
+import { ArrowLeft, Calendar, Tag, Trash2, Check, Sparkles, Share } from "lucide-react";
 import { useState, useEffect, useRef, useCallback } from "react";
+import { sendMessage } from "@/lib/thaillm";
 import { motion, AnimatePresence } from "framer-motion";
+import toast from "react-hot-toast";
 
 interface NoteDetailModalProps {
   note: Note | null;
@@ -21,8 +23,32 @@ export function NoteDetailModal({ note, open, onClose, onDelete, onUpdate }: Not
   const [editCategory, setEditCategory] = useState<NoteCategory>("อื่นๆ");
   const [showCategoryPicker, setShowCategoryPicker] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiResult, setAiResult] = useState<string | null>(null);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const quickActions = [
+    { label: "✨ สรุป 3 ข้อ", prompt: "ช่วยสรุปโน้ตนี้ให้เป็น 3 ข้อสั้นๆ" },
+    { label: "🔑 ดึง Keywords", prompt: "ดึง Keywords สำคัญจากโน้ตนี้มาเป็นข้อๆ" },
+    { label: "📖 อธิบายให้เข้าใจง่าย", prompt: "ช่วยอธิบายเนื้อหาในโน้ตนี้ให้เข้าใจง่ายๆ หน่อย" },
+    { label: "📝 ปรับภาษาให้เป็นทางการ", prompt: "ช่วยปรับภาษาในโน้ตนี้ให้เป็นทางการและสละสลวยขึ้น" },
+  ];
+
+  const handleQuickAi = async (prompt: string) => {
+    if (!note) return;
+    setAiLoading(true);
+    setAiResult(null);
+    try {
+      const fullPrompt = `${prompt}\n\nโน้ต:\n${note.text}`;
+      const result = await sendMessage(fullPrompt, [], []);
+      setAiResult(result);
+    } catch (e) {
+      setAiResult("ขออภัย เกิดข้อผิดพลาด");
+    } finally {
+      setAiLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (note) {
@@ -132,23 +158,96 @@ export function NoteDetailModal({ note, open, onClose, onDelete, onUpdate }: Not
                   className="w-full min-h-[200px] bg-transparent text-base text-text-hi leading-relaxed focus:outline-none resize-none font-sans placeholder:text-text-lo"
                   placeholder="เขียนอะไรก็ได้..."
                 />
+
+                {/* Quick AI Buttons */}
+                <div className="pt-4 border-t border-border/50">
+                  <p className="text-xs text-text-lo mb-3 font-medium flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-gold" />
+                    JamDai AI
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {quickActions.map((act) => (
+                      <button
+                        key={act.label}
+                        onClick={() => handleQuickAi(act.prompt)}
+                        disabled={aiLoading}
+                        className="px-3 py-2 bg-surface hover:bg-surface-hi border border-border text-xs text-text-hi rounded-[10px] transition-colors active:scale-95 disabled:opacity-50"
+                      >
+                        {act.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* AI Result Section */}
+                <AnimatePresence>
+                  {(aiLoading || aiResult) && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="bg-gold-mist/50 border border-gold/20 rounded-xl p-4 mt-2">
+                        <div className="flex items-center justify-between mb-2">
+                          <h3 className="text-sm font-medium text-gold flex items-center gap-1.5">
+                            <Sparkles className="w-4 h-4" />
+                            ผลลัพธ์จาก AI
+                          </h3>
+                          {!aiLoading && aiResult && (
+                            <button
+                              onClick={() => setAiResult(null)}
+                              className="text-text-lo hover:text-text-hi text-xs p-1"
+                            >
+                              ปิด
+                            </button>
+                          )}
+                        </div>
+                        {aiLoading ? (
+                          <div className="flex gap-1.5 items-center py-2">
+                            {[0, 1, 2].map((i) => (
+                              <span key={i} className="w-1.5 h-1.5 rounded-full bg-gold/40 animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="text-sm text-text-hi whitespace-pre-line leading-relaxed">
+                            {aiResult}
+                          </div>
+                        )}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
 
               {/* Footer Actions */}
               <div className="sticky bottom-0 bg-elevated/95 backdrop-blur-sm border-t border-border px-5 py-4 flex items-center justify-between safe-bottom">
-                {/* Delete */}
-                {onDelete && (
+                {/* Actions: Delete & Share */}
+                <div className="flex items-center gap-2">
+                  {onDelete && (
+                    <button
+                      onClick={() => {
+                        onDelete(note.id);
+                        onClose();
+                      }}
+                      className="flex items-center gap-2 text-rose-400 hover:text-rose-500 text-sm font-medium transition-colors py-2 px-3 rounded-xl hover:bg-rose-500/10 active:scale-95"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      ลบ
+                    </button>
+                  )}
                   <button
                     onClick={() => {
-                      onDelete(note.id);
-                      onClose();
+                      const url = `${window.location.origin}/share/${note.id}`;
+                      navigator.clipboard.writeText(url);
+                      toast.success("คัดลอกลิงก์แชร์แล้ว");
                     }}
-                    className="flex items-center gap-2 text-rose-400 hover:text-rose-500 text-sm font-medium transition-colors py-2 px-3 rounded-xl hover:bg-rose-500/10 active:scale-95"
+                    className="flex items-center gap-2 text-text-md hover:text-text-hi text-sm font-medium transition-colors py-2 px-3 rounded-xl hover:bg-surface active:scale-95"
                   >
-                    <Trash2 className="w-4 h-4" />
-                    ลบ
+                    <Share className="w-4 h-4" />
+                    แชร์
                   </button>
-                )}
+                </div>
 
                 {/* Category Picker */}
                 <div className="relative">

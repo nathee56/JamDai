@@ -147,7 +147,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       </header>
 
       {/* ── Main Content ── */}
-      <main className="flex-1 md:ml-[260px] flex flex-col overflow-hidden relative z-10">
+      <main className="flex-1 md:ml-[260px] flex flex-col overflow-hidden relative">
         {/* Mobile top spacer */}
         <div className="md:hidden shrink-0" style={{ height: "calc(56px + env(safe-area-inset-top, 0px))" }} />
 

@@ -4,6 +4,8 @@ import { ThemeProvider } from "@/components/ui/ThemeProvider";
 import { AuthProvider } from "@/hooks/useAuth";
 import { UIProvider } from "@/components/providers/UIProvider";
 import { Toaster } from "react-hot-toast";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 
 const ibmPlex = IBM_Plex_Sans_Thai({
@@ -81,6 +83,8 @@ export default function RootLayout({
             </AuthProvider>
           </UIProvider>
         </ThemeProvider>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
